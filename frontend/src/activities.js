@@ -52,6 +52,7 @@ export const ACTIVITIES = [
     items: [
       { cover: 'game-feed-the-cups', title: '杯杯倒滿', sub: 'Feed the Cups' },
       { cover: 'game-overcooked-2', title: 'Overcooked! 2', sub: '煮過頭 2' },
+      { cover: 'game-stardew-valley', title: '星露谷物語', sub: 'Stardew Valley' },
     ],
   },
 ]

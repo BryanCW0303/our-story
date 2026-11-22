@@ -18,3 +18,4 @@
 | lego-43019.jpg | https://images.brickset.com/sets/images/43019-1.jpg |
 | game-feed-the-cups.jpg | https://cdn.akamai.steamstatic.com/steam/apps/2336220/library_600x900.jpg |
 | game-overcooked-2.jpg | https://cdn.akamai.steamstatic.com/steam/apps/728880/library_600x900.jpg |
+| game-stardew-valley.jpg | https://cdn.akamai.steamstatic.com/steam/apps/413150/library_600x900.jpg |
