@@ -1,5 +1,8 @@
 // Thin wrapper around fetch for the Django API (session cookie + CSRF token).
 
+/** Longest note the server accepts next to a photo or a restaurant (NOTE_MAX in the backend's models.py). */
+export const NOTE_MAX = 500
+
 /**
  * Fired on `window` when the server refuses a request as not signed in: the session ran out, or was
  * ended from another device. The app listens for it and asks the server again who is signed in.

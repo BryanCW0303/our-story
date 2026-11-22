@@ -1,9 +1,7 @@
 import { useState } from 'react'
-import { api, todayString } from '../api.js'
+import { api, NOTE_MAX, todayString } from '../api.js'
 import Icon from './Icon.jsx'
 import Modal from './Modal.jsx'
-
-const NOTE_MAX = 500
 
 /** Upload photos to one place. They go up one at a time so each request stays small. */
 export default function UploadForm({ place, onClose, onUploaded }) {

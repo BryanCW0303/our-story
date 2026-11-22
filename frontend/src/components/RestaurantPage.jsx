@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { api } from '../api.js'
+import { api, NOTE_MAX } from '../api.js'
 import Icon from './Icon.jsx'
 import Modal from './Modal.jsx'
 import RestaurantForm from './RestaurantForm.jsx'
-
-const NOTE_MAX = 500
 
 /** A restaurant's cover: its picture, or a plain placeholder when it has none. */
 export function RestaurantArt({ restaurant, large = false }) {

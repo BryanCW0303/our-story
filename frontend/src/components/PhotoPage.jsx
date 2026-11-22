@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { api } from '../api.js'
+import { api, NOTE_MAX } from '../api.js'
 import Icon from './Icon.jsx'
 import Modal from './Modal.jsx'
-
-const NOTE_MAX = 500
 
 /** The note on its sheet of letter paper, plus the buttons to edit it or delete the photo. */
 function Note({ photo, authed, onChanged, onDeleted, onBusy }) {
