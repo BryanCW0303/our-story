@@ -223,6 +223,8 @@ class ApiTests(TestCase):
         self.assertEqual(client.post("/api/login/", creds, format="json").status_code, 403)  # no CSRF token
         bad = client.post("/api/login/", {**creds, "password": "wrong"}, format="json", HTTP_X_CSRFTOKEN=token)
         self.assertEqual(bad.status_code, 400)
+        not_an_object = client.post("/api/login/", ["tester"], format="json", HTTP_X_CSRFTOKEN=token)
+        self.assertEqual(not_an_object.status_code, 400)
         good = client.post("/api/login/", creds, format="json", HTTP_X_CSRFTOKEN=token)
         self.assertEqual(good.json(), {"authenticated": True, "username": "tester"})
 

@@ -47,10 +47,12 @@ class LoginView(APIView):
         return [ScopedRateThrottle()]
 
     def post(self, request):
+        # A body that is valid JSON but not an object (a list, a number) carries no credentials.
+        data = request.data if isinstance(request.data, dict) else {}
         user = authenticate(
             request,
-            username=str(request.data.get("username", "")),
-            password=str(request.data.get("password", "")),
+            username=str(data.get("username", "")),
+            password=str(data.get("password", "")),
         )
         if user is None:
             return Response({"detail": "帳號或密碼不正確"}, status=status.HTTP_400_BAD_REQUEST)
