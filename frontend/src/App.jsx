@@ -221,14 +221,9 @@ export default function App() {
         </a>
         <nav>
           {authed ? (
-            <>
-              <button className="pill" onClick={() => setModal('settings')}>
-                設定
-              </button>
-              <button className="pill" onClick={logout}>
-                登出
-              </button>
-            </>
+            <button className="pill" onClick={logout}>
+              登出
+            </button>
           ) : (
             session && (
               <button className="pill" onClick={() => setModal('login')}>
