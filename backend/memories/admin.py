@@ -1,22 +1,25 @@
 from django.contrib import admin
 
-from .models import Moment, Photo, SiteConfig
+from .models import Photo, Place, SiteConfig
 
 
-class PhotoInline(admin.TabularInline):
-    model = Photo
-    extra = 0
-    fields = ["image", "thumb"]
-    readonly_fields = ["image", "thumb"]
-    can_delete = True
+@admin.register(Place)
+class PlaceAdmin(admin.ModelAdmin):
+    list_display = ["name", "name_en", "slug", "order"]
+    list_editable = ["order"]
 
 
-@admin.register(Moment)
-class MomentAdmin(admin.ModelAdmin):
-    list_display = ["date", "title", "location", "is_public", "created_by"]
-    list_filter = ["is_public"]
-    search_fields = ["title", "description", "location"]
-    inlines = [PhotoInline]
+@admin.register(Photo)
+class PhotoAdmin(admin.ModelAdmin):
+    list_display = ["taken_on", "place", "note", "is_public", "uploaded_by"]
+    list_filter = ["place", "is_public"]
+    search_fields = ["note"]
+    date_hierarchy = "taken_on"
+    # Files are produced by the upload code; the admin only edits the text around them.
+    readonly_fields = ["image", "thumb", "width", "height", "uploaded_by", "created_at"]
+
+    def has_add_permission(self, request):
+        return False
 
 
 @admin.register(SiteConfig)

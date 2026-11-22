@@ -1,6 +1,13 @@
 from rest_framework import serializers
 
-from .models import Moment, Photo, SiteConfig
+from .models import NOTE_MAX, Photo, Place, SiteConfig
+
+
+def display_name(user):
+    """The name signed under a note: the account's first name if set, else its username."""
+    if user is None:
+        return ""
+    return user.first_name or user.get_username()
 
 
 class SiteConfigSerializer(serializers.ModelSerializer):
@@ -9,14 +16,25 @@ class SiteConfigSerializer(serializers.ModelSerializer):
         fields = ["title", "name_a", "name_b", "start_date"]
 
 
+class PlaceSerializer(serializers.ModelSerializer):
+    photo_count = serializers.IntegerField(read_only=True)  # annotated by the view
+
+    class Meta:
+        model = Place
+        fields = ["slug", "name", "name_en", "color", "photo_count"]
+
+
 class PhotoSerializer(serializers.ModelSerializer):
     # Relative URLs so the same data works behind the dev proxy and the tunnel.
     image = serializers.SerializerMethodField()
     thumb = serializers.SerializerMethodField()
+    note = serializers.CharField(allow_blank=True, max_length=NOTE_MAX, trim_whitespace=True, required=False)
+    note_by = serializers.SerializerMethodField()
 
     class Meta:
         model = Photo
-        fields = ["id", "image", "thumb", "width", "height"]
+        fields = ["id", "image", "thumb", "width", "height", "taken_on", "note", "note_by", "is_public"]
+        read_only_fields = ["width", "height"]
 
     def get_image(self, photo):
         return photo.image.url
@@ -24,11 +42,12 @@ class PhotoSerializer(serializers.ModelSerializer):
     def get_thumb(self, photo):
         return photo.thumb.url
 
+    def get_note_by(self, photo):
+        return display_name(photo.note_by) if photo.note else ""
 
-class MomentSerializer(serializers.ModelSerializer):
-    photos = PhotoSerializer(many=True, read_only=True)
-    author = serializers.CharField(source="created_by.username", read_only=True, default="")
 
-    class Meta:
-        model = Moment
-        fields = ["id", "title", "date", "location", "description", "is_public", "photos", "author"]
+class UploadSerializer(serializers.Serializer):
+    """The form fields sent along with an uploaded image."""
+
+    taken_on = serializers.DateField(required=False)
+    note = serializers.CharField(allow_blank=True, max_length=NOTE_MAX, trim_whitespace=True, required=False)

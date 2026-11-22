@@ -1,11 +1,7 @@
 from django.contrib import admin
-from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 
 from memories import views
-
-router = DefaultRouter()
-router.register("moments", views.MomentViewSet, basename="moment")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -13,7 +9,8 @@ urlpatterns = [
     path("api/login/", views.LoginView.as_view()),
     path("api/logout/", views.LogoutView.as_view()),
     path("api/config/", views.SiteConfigView.as_view()),
-    path("api/photos/<int:pk>/", views.PhotoDeleteView.as_view()),
-    path("api/", include(router.urls)),
+    path("api/places/", views.PlaceListView.as_view()),
+    path("api/places/<slug:slug>/photos/", views.PlacePhotosView.as_view()),
+    path("api/photos/<int:pk>/", views.PhotoDetailView.as_view()),
     path("media/<path:path>", views.media),
 ]

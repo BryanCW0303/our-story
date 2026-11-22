@@ -138,7 +138,7 @@ def WHITENOISE_IMMUTABLE_FILE_TEST(path, url):
     # Vite puts a content hash in every file name under /assets/, so they never change.
     return url.startswith("/assets/")
 
-# Uploaded photos. Served by memories.views.media so private moments stay private.
+# Uploaded photos. Served by memories.views.media so private photos stay private.
 MEDIA_ROOT = DATA_DIR / "media"
 MEDIA_URL = "/media/"
 MAX_PHOTO_BYTES = 40 * 1024 * 1024
