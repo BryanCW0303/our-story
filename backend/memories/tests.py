@@ -42,6 +42,19 @@ class ApiTests(TestCase):
             ["seattle", "vancouver", "guangzhou", "hongkong", "chengdu", "chongqing", "tokyo"],
         )
         self.assertEqual({p["photo_count"] for p in places}, {0})
+        self.assertEqual({p["first_photo"] for p in places}, {None})
+
+    def test_place_dates_span_its_visible_photos(self):
+        self._photo(date(2026, 3, 28))
+        self._photo(date(2026, 4, 1))
+        self._photo(date(2025, 12, 1), is_public=False)
+
+        def tokyo(client):
+            place = next(p for p in client.get("/api/places/").json() if p["slug"] == "tokyo")
+            return place["first_photo"], place["last_photo"]
+
+        self.assertEqual(tokyo(self.member), ("2025-12-01", "2026-04-01"))
+        self.assertEqual(tokyo(self.anon), ("2026-03-28", "2026-04-01"))  # the private one stays hidden
 
     def test_photos_are_listed_oldest_first(self):
         self._photo(date(2026, 3, 29))

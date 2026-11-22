@@ -11,6 +11,62 @@ function daysTogether(startDate) {
   return Math.round((today - parseDate(startDate)) / DAY_MS) + 1
 }
 
+const monthLabel = (date) => `${date.slice(0, 4)} 年 ${Number(date.slice(5, 7))} 月`
+
+/**
+ * How many places and photos so far, and the places as a route in the order they were first visited.
+ * "First visited" is the date of a place's earliest photo.
+ */
+function Footprints({ places }) {
+  // ISO dates sort as text; '9' puts the places without photos last.
+  const stops = places
+    .map((place) => ({ place, first: place.first_photo }))
+    .sort((a, b) => (a.first ?? '9').localeCompare(b.first ?? '9'))
+  const visited = stops.filter((stop) => stop.first)
+  const withPhotos = places.filter((place) => place.photo_count > 0)
+  const total = places.reduce((sum, place) => sum + place.photo_count, 0)
+
+  let span = '上傳第一張照片，足跡就從這裡開始'
+  if (withPhotos.length) {
+    const earliest = withPhotos.reduce((a, b) => (b.first_photo < a.first_photo ? b : a))
+    const latest = withPhotos.reduce((a, b) => (b.last_photo > a.last_photo ? b : a))
+    span = `從 ${monthLabel(earliest.first_photo)}的${earliest.name}，到 ${monthLabel(latest.last_photo)}的${latest.name}`
+  }
+
+  return (
+    <>
+      <div className="divider">
+        <Icon name="route" />
+      </div>
+      <h2 className="sec">我們的足跡</h2>
+      <p className="sub">一起走過的每一步</p>
+      <section className="trail-card">
+        <div className="stats">
+          <div className="stat">
+            <strong>{visited.length}</strong>
+            <span>個地方</span>
+          </div>
+          <Icon name="heart" />
+          <div className="stat">
+            <strong>{total.toLocaleString()}</strong>
+            <span>張照片</span>
+          </div>
+        </div>
+        <p className="span">{span}</p>
+        <div className="path">
+          {stops.map(({ place, first }) => (
+            <a className={first ? 'stop' : 'stop unvisited'} href={`#/p/${place.slug}`} key={place.slug}>
+              <Badge place={place} />
+              <b>{place.name}</b>
+              <small>{first ? first.slice(0, 7).replace('-', '.') : '還沒去'}</small>
+            </a>
+          ))}
+        </div>
+      </section>
+    </>
+  )
+}
+
 export default function Home({ config, places, authed, onOpenSettings }) {
   const hasNames = Boolean(config?.name_a && config?.name_b)
   const days = config?.start_date ? daysTogether(config.start_date) : 0
@@ -43,6 +99,8 @@ export default function Home({ config, places, authed, onOpenSettings }) {
           </p>
         )}
       </header>
+
+      {places && <Footprints places={places} />}
 
       <div className="divider">
         <Icon name="pin" />

@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import Count, Q
+from django.db.models import Count, Max, Min, Q
 from django.http import FileResponse, Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
@@ -78,10 +78,14 @@ class PlaceListView(generics.ListAPIView):
     pagination_class = None
 
     def get_queryset(self):
-        # The count must not reveal how many private photos a place has.
+        # The count and dates must not reveal anything about a place's private photos.
         visible = None if self.request.user.is_authenticated else Q(photos__is_public=True)
         # Explicit order_by: Django drops Meta.ordering once a query is grouped.
-        return Place.objects.annotate(photo_count=Count("photos", filter=visible)).order_by("order", "id")
+        return Place.objects.annotate(
+            photo_count=Count("photos", filter=visible),
+            first_photo=Min("photos__taken_on", filter=visible),
+            last_photo=Max("photos__taken_on", filter=visible),
+        ).order_by("order", "id")
 
 
 class PlacePhotosView(generics.ListAPIView):

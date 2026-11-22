@@ -295,6 +295,107 @@ main {
   font-size: 17px;
 }
 
+/* ---------- 首頁：足跡總結 ---------- */
+
+.trail-card {
+  max-width: 780px;
+  margin: 0 auto 60px;
+  padding: 36px 30px 30px;
+  border-radius: 28px;
+  background: var(--card);
+  box-shadow: 0 6px 22px rgba(var(--shadow), 0.08);
+  text-align: center;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+}
+
+.stat strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: 60px;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.stat span {
+  display: block;
+  margin-top: 10px;
+  color: var(--ink-soft);
+}
+
+.stats > .icon {
+  font-size: 24px;
+  color: var(--line);
+}
+
+.span {
+  margin: 24px 0 30px;
+  font-family: var(--hand);
+  font-size: 17px;
+  color: var(--ink-soft);
+}
+
+/* 路線：按第一次去的先後排，虛線從徽章後面穿過 */
+.path {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+
+.path::before {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 30px;
+  border-top: 2px dashed var(--line);
+}
+
+.stop {
+  position: relative;
+  flex: 1;
+  text-align: center;
+}
+
+.stop .badge {
+  width: 60px;
+  height: 60px;
+  box-shadow: 0 0 0 6px var(--card);
+}
+
+.stop:hover .badge {
+  transform: translateY(-4px) scale(1.06);
+}
+
+.stop b {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--serif);
+  font-size: 14px;
+}
+
+.stop small {
+  display: block;
+  font-family: var(--hand);
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.stop.unvisited .badge {
+  filter: grayscale(1);
+  opacity: 0.45;
+}
+
+.stop.unvisited b,
+.stop.unvisited small {
+  color: var(--ink-faint);
+}
+
 .places {
   display: flex;
   flex-wrap: wrap;
@@ -858,6 +959,39 @@ main {
 
   .places {
     gap: 14px;
+  }
+
+  .trail-card {
+    padding: 28px 14px 22px;
+    margin-bottom: 44px;
+  }
+
+  .stats {
+    gap: 26px;
+  }
+
+  .stat strong {
+    font-size: 46px;
+  }
+
+  .path {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 18px;
+  }
+
+  .path::before {
+    display: none;
+  }
+
+  .stop {
+    flex: 0 0 25%;
+  }
+
+  .stop .badge {
+    width: 54px;
+    height: 54px;
+    box-shadow: none;
   }
 
   .place {

@@ -17,11 +17,14 @@ class SiteConfigSerializer(serializers.ModelSerializer):
 
 
 class PlaceSerializer(serializers.ModelSerializer):
-    photo_count = serializers.IntegerField(read_only=True)  # annotated by the view
+    # Annotated by the view; the dates are those of the earliest and latest visible photo.
+    photo_count = serializers.IntegerField(read_only=True)
+    first_photo = serializers.DateField(read_only=True)
+    last_photo = serializers.DateField(read_only=True)
 
     class Meta:
         model = Place
-        fields = ["slug", "name", "name_en", "color", "photo_count"]
+        fields = ["slug", "name", "name_en", "color", "photo_count", "first_photo", "last_photo"]
 
 
 class PhotoSerializer(serializers.ModelSerializer):
