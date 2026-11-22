@@ -15,6 +15,7 @@ export const ACTIVITIES = [
     verb: '看過',
     unit: '部',
     icon: 'act-film',
+    chip: 'movie',
     color: '#f8dfd6',
     items: [
       { cover: 'film-your-name', title: '你的名字', sub: 'Your Name' },
@@ -32,6 +33,7 @@ export const ACTIVITIES = [
     verb: '拼過',
     unit: '盒',
     icon: 'act-lego',
+    chip: 'brick',
     color: '#f6ecc8',
     items: [
       { cover: 'lego-72153', title: 'Venusaur, Charizard and Blastoise', sub: '72153' },
@@ -48,6 +50,7 @@ export const ACTIVITIES = [
     verb: '玩過',
     unit: '款',
     icon: 'act-game',
+    chip: 'gamepad',
     color: '#dfe5f3',
     items: [
       { cover: 'game-feed-the-cups', title: '杯杯倒滿', sub: 'Feed the Cups' },

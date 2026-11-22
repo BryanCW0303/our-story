@@ -353,9 +353,20 @@ main {
 
 .kinds {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
+  gap: 10px 12px;
   margin: 22px 0 0;
+}
+
+/* 活動的標籤用淡一點的底色，和上一排的地點分類區分 */
+.kinds.acts {
+  margin-top: 10px;
+}
+
+.kinds.acts span {
+  background: #f3ecdf;
+  color: var(--ink-soft);
 }
 
 .kinds span {
@@ -1076,11 +1087,11 @@ section + .divider {
   }
 
   .stats {
-    gap: 26px;
+    gap: 14px;
   }
 
   .stat strong {
-    font-size: 46px;
+    font-size: 40px;
   }
 
   .path {

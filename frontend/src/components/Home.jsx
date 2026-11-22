@@ -21,7 +21,7 @@ function daysTogether(startDate) {
 const monthLabel = (date) => `${date.slice(0, 4)} 年 ${Number(date.slice(5, 7))} 月`
 
 /**
- * How many places and photos so far, and the places as a route in the order they were first visited.
+ * How many places, photos and activities so far, and the places as a route in the order they were first visited.
  * "First visited" is the date of a place's earliest photo. A city listed under both kinds
  * (Vancouver) is one place and one stop here, dated by the earliest photo of either.
  */
@@ -63,12 +63,25 @@ function Footprints({ places }) {
             <strong>{total.toLocaleString()}</strong>
             <span>張照片</span>
           </div>
+          <Icon name="heart" />
+          <div className="stat">
+            <strong>{ACTIVITIES.reduce((sum, activity) => sum + activity.items.length, 0)}</strong>
+            <span>項活動</span>
+          </div>
         </div>
         <p className="kinds">
           {KINDS.map((group) => (
             <span key={group.kind}>
               <Icon name={group.icon} />
               {group.name} {withPhotos.filter((place) => place.kind === group.kind).length}
+            </span>
+          ))}
+        </p>
+        <p className="kinds acts">
+          {ACTIVITIES.map((activity) => (
+            <span key={activity.id}>
+              <Icon name={activity.chip} />
+              {activity.name} {activity.items.length}
             </span>
           ))}
         </p>
