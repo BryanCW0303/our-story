@@ -300,7 +300,7 @@ main {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin: 44px 0 2px;
+  margin: 44px 0 22px;
   font-family: var(--serif);
   font-size: 20px;
 }
@@ -311,14 +311,6 @@ main {
 
 .sub + section .group {
   margin-top: 0;
-}
-
-.group-sub {
-  margin: 0 0 22px;
-  text-align: center;
-  font-family: var(--hand);
-  font-size: 15px;
-  color: var(--ink-soft);
 }
 
 /* ---------- 首頁：足跡總結 ---------- */

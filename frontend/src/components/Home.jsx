@@ -6,8 +6,8 @@ const DAY_MS = 24 * 60 * 60 * 1000
 
 /** The two groups of places on the home page, in display order. */
 export const KINDS = [
-  { kind: 'home', name: '居住地', sub: '一起生活過的城市', icon: 'home' },
-  { kind: 'trip', name: '旅遊地點', sub: '一起旅行去過的地方', icon: 'plane' },
+  { kind: 'home', name: '居住地', icon: 'home' },
+  { kind: 'trip', name: '旅遊地點', icon: 'plane' },
 ]
 
 function daysTogether(startDate) {
@@ -133,7 +133,6 @@ export default function Home({ config, places, authed, onOpenSettings }) {
               <Icon name={group.icon} />
               {group.name}
             </h3>
-            <p className="group-sub">{group.sub}</p>
             <div className="places">
               {places
                 .filter((place) => place.kind === group.kind)
