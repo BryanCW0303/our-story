@@ -18,6 +18,16 @@ function daysTogether(startDate) {
   return Math.round((today - parseDate(startDate)) / DAY_MS) + 1
 }
 
+const yearMonth = (date) => date.slice(0, 7).replace('-', '.')
+
+/** What a place's card says under its name: the months of its earliest and latest photo. */
+function placeSpan(place) {
+  if (!place.first_photo) return '還沒有照片'
+  const from = yearMonth(place.first_photo)
+  const to = yearMonth(place.last_photo)
+  return from === to ? from : `${from} – ${to}`
+}
+
 const monthLabel = (date) => `${date.slice(0, 4)} 年 ${Number(date.slice(5, 7))} 月`
 
 /**
@@ -91,7 +101,7 @@ function Footprints({ places }) {
             <a className={first ? 'stop' : 'stop unvisited'} href={`#/p/${place.slug}`} key={place.slug}>
               <Badge place={place} />
               <b>{place.name}</b>
-              <small>{first ? first.slice(0, 7).replace('-', '.') : '還沒去'}</small>
+              <small>{first ? yearMonth(first) : '還沒去'}</small>
             </a>
           ))}
         </div>
@@ -155,7 +165,7 @@ export default function Home({ config, places, authed, onOpenSettings }) {
                     <Badge place={place} />
                     <b>{place.name}</b>
                     <span className="en">{place.name_en}</span>
-                    <span className="meta">{place.photo_count} 張照片</span>
+                    <span className="meta">{placeSpan(place)}</span>
                   </a>
                 ))}
             </div>
