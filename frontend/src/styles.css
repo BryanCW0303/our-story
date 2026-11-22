@@ -381,18 +381,12 @@ main {
   margin-right: 6px;
 }
 
-.span {
-  margin: 16px 0 30px;
-  font-family: var(--hand);
-  font-size: 17px;
-  color: var(--ink-soft);
-}
-
 /* 路線：按第一次去的先後排，虛線從徽章後面穿過 */
 .path {
   position: relative;
   display: flex;
   justify-content: space-between;
+  margin-top: 34px;
 }
 
 .path::before {

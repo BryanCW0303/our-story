@@ -33,8 +33,6 @@ function placeSpan(place) {
   return from === to ? from : `${from} – ${to}`
 }
 
-const monthLabel = (date) => `${date.slice(0, 4)} 年 ${Number(date.slice(5, 7))} 月`
-
 /**
  * How many places, photos, restaurants and activities so far, and the places as a route in the order they were first visited.
  * "First visited" is the date of a place's earliest photo. A city listed under both kinds
@@ -52,13 +50,6 @@ function Footprints({ places }) {
   const visited = stops.filter((stop) => stop.first)
   const withPhotos = places.filter((place) => place.photo_count > 0)
   const total = places.reduce((sum, place) => sum + place.photo_count, 0)
-
-  let span = '上傳第一張照片，足跡就從這裡開始'
-  if (withPhotos.length) {
-    const earliest = withPhotos.reduce((a, b) => (b.first_photo < a.first_photo ? b : a))
-    const latest = withPhotos.reduce((a, b) => (b.last_photo > a.last_photo ? b : a))
-    span = `從 ${monthLabel(earliest.first_photo)}的${earliest.name}，到 ${monthLabel(latest.last_photo)}的${latest.name}`
-  }
 
   return (
     <>
@@ -105,7 +96,6 @@ function Footprints({ places }) {
             </span>
           ))}
         </p>
-        <p className="span">{span}</p>
         <div className="path">
           {stops.map(({ place, first }) => (
             <a className={first ? 'stop' : 'stop unvisited'} href={`#/p/${place.slug}`} key={place.slug}>
