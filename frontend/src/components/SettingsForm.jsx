@@ -30,11 +30,11 @@ export default function SettingsForm({ config, onClose, onSaved }) {
         </label>
         <div className="form-row">
           <label>
-            你的名字
+            第一個名字
             <input value={form.name_a} onChange={set('name_a')} maxLength={30} />
           </label>
           <label>
-            她的名字
+            第二個名字
             <input value={form.name_b} onChange={set('name_b')} maxLength={30} />
           </label>
         </div>
