@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { api } from '../api.js'
 import Icon from './Icon.jsx'
 import Modal from './Modal.jsx'
@@ -13,7 +13,7 @@ function Note({ photo, authed, onChanged, onDeleted, onBusy }) {
   const [error, setError] = useState('')
   const field = useRef(null)
 
-  // Arrow keys must not flip photos while someone is typing or a dialog is open.
+  // Moving to another photo would throw away what is being typed, so it waits until this is done.
   useEffect(() => {
     onBusy(Boolean(draft) || confirming)
     return () => onBusy(false)
@@ -147,25 +147,22 @@ function Note({ photo, authed, onChanged, onDeleted, onBusy }) {
 /** One photo: the picture on the left, its note on the right. Arrow keys and swipes move through the place. */
 export default function PhotoPage({ place, photos, index, authed, onStep, onChanged, onDeleted }) {
   const photo = photos[index]
-  const paused = useRef(false)
+  const [paused, setPaused] = useState(false) // while the note is being edited or the delete dialog is open
   const touchX = useRef(null)
-  const many = photos.length > 1
-  const setPaused = useCallback((busy) => {
-    paused.current = busy
-  }, [])
+  const canStep = photos.length > 1 && !paused
 
   useEffect(() => {
     const onKey = (event) => {
-      // Not while editing, typing in any field, or with a dialog (login, settings, delete) open.
-      if (paused.current || document.querySelector('.backdrop')) return
+      // Not while editing, typing in any field, or with a dialog (login, delete) open.
+      if (paused || document.querySelector('.backdrop')) return
       if (/^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName)) return
-      if (event.key === 'ArrowLeft' && many) onStep(-1)
-      if (event.key === 'ArrowRight' && many) onStep(1)
+      if (event.key === 'ArrowLeft' && canStep) onStep(-1)
+      if (event.key === 'ArrowRight' && canStep) onStep(1)
       if (event.key === 'Escape') window.location.hash = `#/p/${place.slug}`
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [many, onStep, place.slug])
+  }, [paused, canStep, onStep, place.slug])
 
   return (
     <>
@@ -179,19 +176,19 @@ export default function PhotoPage({ place, photos, index, authed, onStep, onChan
             onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
             onTouchEnd={(e) => {
               const moved = e.changedTouches[0].clientX - (touchX.current ?? e.changedTouches[0].clientX)
-              if (many && Math.abs(moved) > 50) onStep(moved < 0 ? 1 : -1)
+              if (canStep && Math.abs(moved) > 50) onStep(moved < 0 ? 1 : -1)
             }}
           >
             <img key={photo.id} src={photo.image} width={photo.width} height={photo.height} alt="" />
           </div>
           <div className="pager">
-            <button className="round" onClick={() => onStep(-1)} disabled={!many} aria-label="上一張">
+            <button className="round" onClick={() => onStep(-1)} disabled={!canStep} aria-label="上一張">
               <Icon name="prev" />
             </button>
             <span>
               {index + 1} / {photos.length}
             </span>
-            <button className="round" onClick={() => onStep(1)} disabled={!many} aria-label="下一張">
+            <button className="round" onClick={() => onStep(1)} disabled={!canStep} aria-label="下一張">
               <Icon name="next" />
             </button>
           </div>
