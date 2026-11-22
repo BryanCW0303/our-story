@@ -104,6 +104,18 @@ const ICONS = {
     <path d="M60 16V5M56 9h8"/>
     <path d="M98 30l2.500 5 5 2.500-5 2.500-2.500 5-2.500-5-5-2.500 5-2.500z" fill="#f2b872" stroke-width="2"/>
     ${face(60, 51, 8)}`,
+  // 溫哥華（旅遊）：煤氣鎮蒸汽鐘
+  'vancouver-trip': `${ground('#e4dcc0')}
+    <g fill="#fff" stroke-width="2"><circle cx="41" cy="13" r="4.500"/><circle cx="34" cy="7" r="3"/><circle cx="79" cy="13" r="4.500"/><circle cx="86" cy="7" r="3"/></g>
+    <path d="M46 26v-7M74 26v-7"/>
+    <rect x="40" y="96" width="40" height="12" rx="3" fill="#a07c62"/>
+    <rect x="46" y="58" width="28" height="38" rx="3" fill="#cfe3e8"/>
+    <path d="M46 86h28" stroke-width="1.6" opacity=".35"/>
+    <rect x="38" y="28" width="44" height="30" rx="6" fill="#c99a6b"/>
+    <path d="M42 28l18-11 18 11z" fill="#a07c62"/>
+    <circle cx="60" cy="43" r="10.500" fill="#fffaf2"/>
+    <path d="M60 43v-6.500M60 43l4.500 3" stroke-width="2.2"/>
+    ${face(60, 70, 6)}`,
   // 其他地點（之後在後台新增、還沒畫圖示的）：一個圖釘
   fallback: `${ground('#f3d5dc')}
     <path d="M60 102C42 80 32 66 32 50a28 28 0 0 1 56 0c0 16-10 30-28 52z" fill="#f6bccb"/>

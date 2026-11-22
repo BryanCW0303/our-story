@@ -21,13 +21,18 @@ const monthLabel = (date) => `${date.slice(0, 4)} 年 ${Number(date.slice(5, 7))
 
 /**
  * How many places and photos so far, and the places as a route in the order they were first visited.
- * "First visited" is the date of a place's earliest photo.
+ * "First visited" is the date of a place's earliest photo. A city listed under both kinds
+ * (Vancouver) is one place and one stop here, dated by the earliest photo of either.
  */
 function Footprints({ places }) {
+  const cities = new Map()
+  for (const place of places) {
+    const seen = cities.get(place.name)
+    if (!seen) cities.set(place.name, { place, first: place.first_photo })
+    else if (place.first_photo && (!seen.first || place.first_photo < seen.first)) seen.first = place.first_photo
+  }
   // ISO dates sort as text; '9' puts the places without photos last.
-  const stops = places
-    .map((place) => ({ place, first: place.first_photo }))
-    .sort((a, b) => (a.first ?? '9').localeCompare(b.first ?? '9'))
+  const stops = [...cities.values()].sort((a, b) => (a.first ?? '9').localeCompare(b.first ?? '9'))
   const visited = stops.filter((stop) => stop.first)
   const withPhotos = places.filter((place) => place.photo_count > 0)
   const total = places.reduce((sum, place) => sum + place.photo_count, 0)

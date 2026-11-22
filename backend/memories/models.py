@@ -42,7 +42,11 @@ class SiteConfig(models.Model):
 
 
 class Place(models.Model):
-    """A city on the home page. The frontend draws its landmark icon from `slug`."""
+    """A city on the home page. The frontend draws its landmark icon from `slug`.
+
+    The same city can appear once per kind (Vancouver as a home and as a trip): two
+    places with the same name, each with its own photos.
+    """
 
     class Kind(models.TextChoices):
         HOME = "home", "居住地"
