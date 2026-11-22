@@ -27,14 +27,20 @@ const ICONS = {
     <path d="M90 28v10M85 33h10M26 48v8M22 52h8" stroke="#f2b872" stroke-width="2.6"/>
     <circle cx="60" cy="6" r="3" fill="#f2b872"/>
     ${face(60, 88, 7)}`,
-  // 溫哥華：科學世界球形館和雪山
-  vancouver: `<path d="M6 100L32 54l13 20 13-18 28 44z" fill="#b9cfdc"/>
-    <path d="M25 66l7-12 7 11-7-3z" fill="#fff" stroke-width="2"/>
-    <rect x="36" y="92" width="64" height="16" rx="6" fill="#f6e3c5"/>
-    <circle cx="68" cy="64" r="32" fill="#e2ebf0"/>
-    <path d="M38 53h60M40 80h56M68 32L48 53l20 27 20-27zM48 53l-8 27M88 53l8 27M68 80v16" stroke-width="1.5" opacity=".3"/>
-    <path d="M100 22l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="#ef8f7d" stroke-width="2"/>
-    ${face(68, 62, 9)}`,
+  // 溫哥華（居住地）：UBC 的鐘樓和圖書館
+  vancouver: `${ground('#cfdcc6')}
+    <rect x="82" y="16" width="18" height="90" rx="3" fill="#f4f1ea"/>
+    <circle cx="91" cy="31" r="6" fill="#fffaf2" stroke-width="2.2"/>
+    <path d="M91 31v-3.500M91 31l2.500 1.500" stroke-width="1.8"/>
+    <path d="M88 46v50M94 46v50" stroke-width="1.5" opacity=".3"/>
+    <rect x="20" y="62" width="56" height="44" fill="#ece4d2"/>
+    <path d="M15 63L48 39l33 24z" fill="#9db6c9"/>
+    <path d="M48 39V23"/>
+    <path d="M48 21h25l-5 6.500 5 6.500H48z" fill="#2f5d9b" stroke-width="2"/>
+    <text x="50.500" y="30.700" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#f6cf5e" stroke="none">UBC</text>
+    <path d="M41 106V95a7 7 0 0 1 14 0v11z" fill="#8a6a58" stroke-width="2.2"/>
+    <g fill="#cfe3e8" stroke-width="2"><rect x="26" y="88" width="8" height="12" rx="4"/><rect x="62" y="88" width="8" height="12" rx="4"/></g>
+    ${face(48, 74, 8)}`,
   // 東京：東京鐵塔和櫻花
   tokyo: `${ground('#f6d6d2')}
     <path d="M60 6v16"/>
