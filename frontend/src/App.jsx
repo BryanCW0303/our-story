@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { ACTIVITIES } from './activities.js'
 import { api } from './api.js'
+import ActivityPage from './components/ActivityPage.jsx'
 import Home from './components/Home.jsx'
 import Icon from './components/Icon.jsx'
 import LoginForm from './components/LoginForm.jsx'
@@ -12,9 +14,12 @@ import UploadForm from './components/UploadForm.jsx'
 //   #/               home (the places)
 //   #/p/tokyo        one place's timeline
 //   #/p/tokyo/12     one photo
+//   #/a/film         one kind of activity (films, LEGO, games)
 function readRoute() {
-  const [, slug, id] = window.location.hash.match(/^#\/p\/([\w-]+)(?:\/(\d+))?$/) ?? []
-  return { slug: slug ?? null, photoId: id ? Number(id) : null }
+  const hash = window.location.hash
+  const [, slug, id] = hash.match(/^#\/p\/([\w-]+)(?:\/(\d+))?$/) ?? []
+  const [, activity] = hash.match(/^#\/a\/([\w-]+)$/) ?? []
+  return { slug: slug ?? null, photoId: id ? Number(id) : null, activity: activity ?? null }
 }
 
 const oldestFirst = (a, b) => a.taken_on.localeCompare(b.taken_on) || a.id - b.id
@@ -116,8 +121,11 @@ export default function App() {
     }
   }
 
+  const activity = ACTIVITIES.find((entry) => entry.id === route.activity)
   let page
-  if (!route.slug) {
+  if (route.activity) {
+    page = activity ? <ActivityPage activity={activity} /> : <Missing text="找不到這一頁。" href="#/" label="回到首頁" />
+  } else if (!route.slug) {
     page = <Home config={config} places={places} authed={authed} onOpenSettings={() => setModal('settings')} />
   } else if (!places) {
     page = <p className="muted center pad">載入中…</p>
@@ -182,7 +190,7 @@ export default function App() {
       </header>
 
       {/* The key replays the entrance animation when the page changes, but not between photos. */}
-      <main key={`${route.slug ?? 'home'}:${route.photoId ? 'photo' : 'list'}`}>
+      <main key={`${route.activity ? `a-${route.activity}` : (route.slug ?? 'home')}:${route.photoId ? 'photo' : 'list'}`}>
         {error && (
           <p className="notice error" role="alert">
             {error}

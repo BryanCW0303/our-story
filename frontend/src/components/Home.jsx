@@ -1,3 +1,4 @@
+import { ACTIVITIES } from '../activities.js'
 import { parseDate } from '../api.js'
 import Icon from './Icon.jsx'
 import { Badge } from './Landmark.jsx'
@@ -147,6 +148,24 @@ export default function Home({ config, places, authed, onOpenSettings }) {
             </div>
           </section>
         ))}
+
+      <div className="divider">
+        <Icon name="sparkles" />
+      </div>
+      <h2 className="sec">我們一起做過的事</h2>
+      <p className="sub">看過的、拼過的、玩過的</p>
+      <div className="places">
+        {ACTIVITIES.map((activity) => (
+          <a className="place" href={`#/a/${activity.id}`} key={activity.id}>
+            <Badge place={{ slug: activity.icon, color: activity.color }} />
+            <b>{activity.name}</b>
+            <span className="en">{activity.en}</span>
+            <span className="meta">
+              {activity.items.length} {activity.unit}
+            </span>
+          </a>
+        ))}
+      </div>
     </>
   )
 }
