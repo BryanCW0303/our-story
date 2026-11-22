@@ -50,7 +50,8 @@ class Place(models.Model):
     """
 
     class Kind(models.TextChoices):
-        HOME = "home", "居住地"
+        NOW = "now", "現居地"
+        PAST = "past", "曾經居住過的地方"
         TRIP = "trip", "旅遊地點"
 
     slug = models.SlugField("代號", unique=True, help_text="網址和圖示用的英文代號，例如 tokyo")

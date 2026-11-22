@@ -5,10 +5,11 @@ import { Badge } from './Landmark.jsx'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
-/** The two groups of places on the home page, in display order. */
+/** The groups of places on the home page, in display order. `short` is for the small labels in the summary. */
 export const KINDS = [
-  { kind: 'home', name: '居住地', icon: 'home' },
-  { kind: 'trip', name: '旅遊地點', icon: 'plane' },
+  { kind: 'now', name: '現居地', short: '現居地', icon: 'home' },
+  { kind: 'past', name: '曾經居住過的地方', short: '曾住過', icon: 'history' },
+  { kind: 'trip', name: '旅遊地點', short: '旅遊地點', icon: 'plane' },
 ]
 
 function daysTogether(startDate) {
@@ -20,10 +21,14 @@ function daysTogether(startDate) {
 
 const yearMonth = (date) => date.slice(0, 7).replace('-', '.')
 
-/** What a place's card says under its name: the months of its earliest and latest photo. */
+/**
+ * What a place's card says under its name: the months of its earliest and latest photo.
+ * A current home has no end yet, so it runs to "now".
+ */
 function placeSpan(place) {
   if (!place.first_photo) return '還沒有照片'
   const from = yearMonth(place.first_photo)
+  if (place.kind === 'now') return `${from} – now`
   const to = yearMonth(place.last_photo)
   return from === to ? from : `${from} – ${to}`
 }
@@ -88,7 +93,7 @@ function Footprints({ places }) {
           {KINDS.map((group) => (
             <span key={group.kind}>
               <Icon name={group.icon} />
-              {group.name} {withPhotos.filter((place) => place.kind === group.kind).length}
+              {group.short} {withPhotos.filter((place) => place.kind === group.kind).length}
             </span>
           ))}
         </p>

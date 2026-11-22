@@ -40,10 +40,10 @@ class ApiTests(TestCase):
         self.assertEqual(
             [(p["kind"], p["slug"]) for p in places],
             [
-                ("home", "seattle"),
-                ("home", "guangzhou"),
-                ("home", "vancouver"),
-                ("home", "tokyo"),
+                ("now", "vancouver"),
+                ("now", "tokyo"),
+                ("past", "seattle"),
+                ("past", "guangzhou"),
                 ("trip", "hongkong"),
                 ("trip", "chengdu"),
                 ("trip", "chongqing"),
