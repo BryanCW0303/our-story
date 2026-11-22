@@ -9,7 +9,7 @@ from django.test import TestCase, override_settings
 from PIL import ExifTags, Image
 from rest_framework.test import APIClient
 
-from .models import Photo, Place
+from .models import Photo, Place, Restaurant
 
 
 def _jpeg_upload(size=(3000, 2000), name="a.jpg", taken=None):
@@ -156,6 +156,63 @@ class ApiTests(TestCase):
         self.assertTrue(all(p.exists() for p in paths))
         self.assertEqual(self.member.delete(f"/api/photos/{photo.id}/").status_code, 204)
         self.assertFalse(any(p.exists() for p in paths))
+
+    def test_adding_restaurants_and_counting_them(self):
+        body = {"name": " 巷口拉麵 ", "cuisine": "拉麵", "location": "車站旁", "must_order": "叉燒拉麵"}
+        plain = self.member.post("/api/places/tokyo/restaurants/", body, format="multipart")
+        self.assertEqual(plain.status_code, 201)
+        self.assertEqual(plain.json()["name"], "巷口拉麵")
+        self.assertEqual((plain.json()["image"], plain.json()["note"]), (None, ""))
+
+        with_cover = {"name": "海邊小館", "image": _jpeg_upload(size=(2400, 1800)), "note": "看著海吃飯"}
+        data = self.member.post("/api/places/tokyo/restaurants/", with_cover, format="multipart").json()
+        self.assertTrue(data["image"].startswith("/media/restaurants/tokyo/"))
+        self.assertEqual((data["cuisine"], data["note_by"]), ("", "tester"))
+        self.assertEqual(Image.open(Restaurant.objects.get(id=data["id"]).image.path).size, (1600, 1200))
+
+        # Visitors can read the list and the covers, and the counts are not multiplied by the photos.
+        self._photo(date(2026, 1, 1))
+        self._photo(date(2026, 1, 2))
+        self._photo(date(2026, 1, 3))
+        names = [r["name"] for r in self.anon.get("/api/places/tokyo/restaurants/").json()]
+        self.assertEqual(names, ["巷口拉麵", "海邊小館"])
+        self.assertEqual(self.anon.get(data["thumb"]).status_code, 200)
+        tokyo = next(p for p in self.anon.get("/api/places/").json() if p["slug"] == "tokyo")
+        self.assertEqual((tokyo["photo_count"], tokyo["restaurant_count"]), (3, 2))
+
+    def test_restaurant_needs_a_name_and_a_real_picture(self):
+        self.assertEqual(self.member.post("/api/places/tokyo/restaurants/", {"cuisine": "拉麵"}).status_code, 400)
+        fake = SimpleUploadedFile("a.jpg", b"not really a photo", content_type="image/jpeg")
+        bad = self.member.post("/api/places/tokyo/restaurants/", {"name": "x", "image": fake}, format="multipart")
+        self.assertEqual(bad.status_code, 400)
+        self.assertEqual(Restaurant.objects.count(), 0)
+        self.assertEqual(self.member.post("/api/places/atlantis/restaurants/", {"name": "x"}).status_code, 404)
+
+    def test_visitors_cannot_change_restaurants(self):
+        restaurant = Restaurant.objects.create(place=self.tokyo, name="巷口拉麵")
+        self.assertEqual(self.anon.post("/api/places/tokyo/restaurants/", {"name": "x"}).status_code, 403)
+        self.assertEqual(self.anon.patch(f"/api/restaurants/{restaurant.id}/", {"name": "hacked"}).status_code, 403)
+        self.assertEqual(self.anon.delete(f"/api/restaurants/{restaurant.id}/").status_code, 403)
+        self.assertEqual(Restaurant.objects.get().name, "巷口拉麵")
+
+    def test_editing_and_deleting_a_restaurant(self):
+        created = {"name": "巷口拉麵", "image": _jpeg_upload(size=(400, 300))}
+        first = self.member.post("/api/places/tokyo/restaurants/", created, format="multipart").json()
+        url = f"/api/restaurants/{first['id']}/"
+        old_cover = Path(Restaurant.objects.get().image.path)
+
+        data = self.member.patch(url, {"note": "湯頭很濃", "must_order": "加麵"}, format="json").json()
+        self.assertEqual((data["note"], data["note_by"], data["must_order"]), ("湯頭很濃", "tester", "加麵"))
+        self.assertEqual(data["image"], first["image"])  # untouched when no new picture is sent
+
+        # A new picture replaces the old files.
+        data = self.member.patch(url, {"image": _jpeg_upload(size=(300, 300))}, format="multipart").json()
+        self.assertNotEqual(data["image"], first["image"])
+        self.assertFalse(old_cover.exists())
+
+        new_cover = Path(Restaurant.objects.get().image.path)
+        self.assertEqual(self.member.delete(url).status_code, 204)
+        self.assertFalse(new_cover.exists())
 
     def test_login_logout_flow_with_csrf(self):
         client = APIClient(enforce_csrf_checks=True)

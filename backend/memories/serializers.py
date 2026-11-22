@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import NOTE_MAX, Photo, Place, SiteConfig
+from .models import NOTE_MAX, Photo, Place, Restaurant, SiteConfig
 
 
 def display_name(user):
@@ -19,12 +19,13 @@ class SiteConfigSerializer(serializers.ModelSerializer):
 class PlaceSerializer(serializers.ModelSerializer):
     # Annotated by the view; the dates are those of the earliest and latest visible photo.
     photo_count = serializers.IntegerField(read_only=True)
+    restaurant_count = serializers.IntegerField(read_only=True)
     first_photo = serializers.DateField(read_only=True)
     last_photo = serializers.DateField(read_only=True)
 
     class Meta:
         model = Place
-        fields = ["slug", "name", "name_en", "kind", "color", "photo_count", "first_photo", "last_photo"]
+        fields = ["slug", "name", "name_en", "kind", "color", "photo_count", "restaurant_count", "first_photo", "last_photo"]
 
 
 class PhotoSerializer(serializers.ModelSerializer):
@@ -47,6 +48,27 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     def get_note_by(self, photo):
         return display_name(photo.note_by) if photo.note else ""
+
+
+class RestaurantSerializer(serializers.ModelSerializer):
+    # The cover is optional, so both URLs can be null.
+    image = serializers.SerializerMethodField()
+    thumb = serializers.SerializerMethodField()
+    note = serializers.CharField(allow_blank=True, max_length=NOTE_MAX, trim_whitespace=True, required=False)
+    note_by = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Restaurant
+        fields = ["id", "name", "cuisine", "location", "must_order", "image", "thumb", "note", "note_by"]
+
+    def get_image(self, restaurant):
+        return restaurant.image.url if restaurant.image else None
+
+    def get_thumb(self, restaurant):
+        return restaurant.thumb.url if restaurant.thumb else None
+
+    def get_note_by(self, restaurant):
+        return display_name(restaurant.note_by) if restaurant.note else ""
 
 
 class UploadSerializer(serializers.Serializer):

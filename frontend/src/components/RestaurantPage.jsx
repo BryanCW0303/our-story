@@ -1,0 +1,170 @@
+import { useEffect, useRef, useState } from 'react'
+import { api } from '../api.js'
+import Icon from './Icon.jsx'
+import Modal from './Modal.jsx'
+
+const NOTE_MAX = 500
+
+/** A restaurant's cover: its picture, or a plain placeholder when it has none. */
+export function RestaurantArt({ restaurant, large = false }) {
+  const src = large ? restaurant.image : restaurant.thumb
+  if (src) return <img className="art" src={src} alt="" loading="lazy" />
+  return (
+    <span className="art blank">
+      <Icon name="food" />
+    </span>
+  )
+}
+
+/** One favourite restaurant: its cover on the left; what kind, where, what to order and our note on the right. */
+export default function RestaurantPage({ place, restaurant, authed, onChanged, onDeleted }) {
+  const [draft, setDraft] = useState(null) // the note text while it is being edited
+  const [dialog, setDialog] = useState(null) // 'delete'
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const field = useRef(null)
+
+  const editing = draft !== null
+  useEffect(() => {
+    if (editing) field.current?.focus()
+  }, [editing])
+
+  // The search is made of what we know: the name, where it is, and the city.
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    [restaurant.name, restaurant.location, place.name].filter(Boolean).join(' '),
+  )}`
+
+  async function saveNote() {
+    setBusy(true)
+    setError('')
+    try {
+      onChanged(await api(`restaurants/${restaurant.id}/`, { method: 'PATCH', json: { note: draft } }))
+      setDraft(null)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function remove() {
+    setBusy(true)
+    setError('')
+    try {
+      await api(`restaurants/${restaurant.id}/`, { method: 'DELETE' })
+      onDeleted(restaurant)
+    } catch (err) {
+      setError(err.message)
+      setBusy(false)
+      setDialog(null)
+    }
+  }
+
+  return (
+    <>
+      <a className="back" href={`#/p/${place.slug}/food`}>
+        <Icon name="back" /> 返回{place.name}
+      </a>
+      <div className="viewer">
+        <div>
+          <div className="frame food">
+            <RestaurantArt restaurant={restaurant} large />
+          </div>
+        </div>
+        <div>
+          <div className="stamp">
+            {restaurant.cuisine && <span className="date">{restaurant.cuisine}</span>}
+            <span className="where">
+              <Icon name="pin" /> {place.name}
+            </span>
+          </div>
+          <h1 className="rest-name">{restaurant.name}</h1>
+
+          <div className="letter">
+            {editing ? (
+              <textarea
+                ref={field}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                maxLength={NOTE_MAX}
+                placeholder="寫下關於這間餐廳的話…"
+                aria-label="留言"
+              />
+            ) : restaurant.note ? (
+              <>
+                <p>{restaurant.note}</p>
+                {restaurant.note_by && <p className="sign">—— {restaurant.note_by}</p>}
+              </>
+            ) : (
+              <p className="none">還沒有留言。</p>
+            )}
+          </div>
+
+          {(restaurant.location || restaurant.must_order) && (
+            <ul className="facts">
+              {restaurant.location && (
+                <li>
+                  <Icon name="pin" />
+                  {restaurant.location}
+                  <a href={mapUrl} target="_blank" rel="noopener noreferrer">
+                    在地圖上看
+                  </a>
+                </li>
+              )}
+              {restaurant.must_order && (
+                <li>
+                  <Icon name="star" />
+                  必點：{restaurant.must_order}
+                </li>
+              )}
+            </ul>
+          )}
+
+          {error && (
+            <p className="notice error" role="alert">
+              {error}
+            </p>
+          )}
+
+          {authed && (
+            <div className="edit">
+              {editing ? (
+                <>
+                  <button className="btn primary" onClick={saveNote} disabled={busy}>
+                    {busy ? '儲存中…' : '儲存留言'}
+                  </button>
+                  <button className="btn ghost" onClick={() => setDraft(null)} disabled={busy}>
+                    取消
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button className="btn primary" onClick={() => setDraft(restaurant.note)}>
+                    <Icon name="pencil" /> {restaurant.note ? '編輯留言' : '寫留言'}
+                  </button>
+                  <button className="btn ghost danger" onClick={() => setDialog('delete')}>
+                    <Icon name="trash" /> 刪除
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {dialog === 'delete' && (
+        <Modal title="刪除這間餐廳？" onClose={() => setDialog(null)} locked={busy}>
+          <p className="muted">餐廳的資料、封面和留言會一起刪除，刪除後無法復原。</p>
+          <div className="form-actions">
+            <button className="btn ghost" onClick={() => setDialog(null)} disabled={busy}>
+              取消
+            </button>
+            <button className="btn primary" onClick={remove} disabled={busy}>
+              {busy ? '刪除中…' : '刪除'}
+            </button>
+          </div>
+        </Modal>
+      )}
+    </>
+  )
+}

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Photo, Place, SiteConfig
+from .models import Photo, Place, Restaurant, SiteConfig
 
 
 @admin.register(Place)
@@ -18,6 +18,18 @@ class PhotoAdmin(admin.ModelAdmin):
     date_hierarchy = "taken_on"
     # Files are produced by the upload code; the admin only edits the text around them.
     readonly_fields = ["image", "thumb", "width", "height", "uploaded_by", "created_at"]
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(Restaurant)
+class RestaurantAdmin(admin.ModelAdmin):
+    list_display = ["name", "place", "cuisine", "location", "added_by"]
+    list_filter = ["place"]
+    search_fields = ["name", "cuisine", "location", "must_order", "note"]
+    # Cover files are produced by the upload code; the admin only edits the text.
+    readonly_fields = ["image", "thumb", "added_by", "created_at"]
 
     def has_add_permission(self, request):
         return False

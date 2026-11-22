@@ -15,6 +15,7 @@ register_heif_opener()  # iPhone HEIC uploads
 
 DISPLAY_MAX = 2560  # long edge of the full-size version, px
 THUMB_MAX = 720  # long edge of the timeline thumbnail, px
+COVER_MAX = 1600  # long edge of a restaurant's cover picture, px
 NOTE_MAX = 500  # characters in the note written next to a photo
 
 
@@ -71,6 +72,10 @@ def _upload_path(instance, filename):
     return f"photos/{instance.place.slug}/{filename}"
 
 
+def _restaurant_path(instance, filename):
+    return f"restaurants/{instance.place.slug}/{filename}"
+
+
 class Photo(models.Model):
     place = models.ForeignKey(Place, on_delete=models.PROTECT, related_name="photos", verbose_name="地點")
     image = models.ImageField(upload_to=_upload_path)
@@ -103,16 +108,9 @@ class Photo(models.Model):
         is used for screenshots and other files without it.
         Raises ValueError if the file is not an image Pillow can read.
         """
-        try:
-            source = Image.open(upload)
-            source.load()
-        except Exception as exc:  # Pillow raises many different types here
-            raise ValueError("not an image") from exc
-
+        source = _read_image(upload)
         taken_on = _exif_date(source) or fallback_date
-        source = ImageOps.exif_transpose(source)  # respect phone rotation
-        if source.mode != "RGB":
-            source = source.convert("RGB")
+        source = _upright_rgb(source)
 
         stem = uuid.uuid4().hex
         display, (width, height) = _jpeg(source, DISPLAY_MAX, 90)
@@ -131,6 +129,63 @@ class Photo(models.Model):
         photo.thumb.save(f"{stem}_t.jpg", thumb, save=False)
         photo.save()
         return photo
+
+
+class Restaurant(models.Model):
+    """A favourite restaurant in a place. Everyone can see these; the cover picture is optional."""
+
+    place = models.ForeignKey(Place, on_delete=models.PROTECT, related_name="restaurants", verbose_name="地點")
+    name = models.CharField("餐廳名", max_length=60)
+    cuisine = models.CharField("種類", max_length=30, blank=True)
+    location = models.CharField("位置", max_length=120, blank=True)
+    must_order = models.CharField("必點", max_length=120, blank=True)
+    image = models.ImageField(upload_to=_restaurant_path, blank=True)
+    thumb = models.ImageField(upload_to=_restaurant_path, blank=True)
+    note = models.TextField("留言", blank=True, max_length=NOTE_MAX)
+    note_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    added_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["id"]  # in the order they were added
+        verbose_name = verbose_name_plural = "餐廳"
+
+    def __str__(self):
+        return f"{self.place} {self.name}"
+
+    def set_cover(self, upload):
+        """Replace the cover picture with `upload`, without saving the row.
+
+        Raises ValueError if the file is not an image Pillow can read.
+        """
+        source = _upright_rgb(_read_image(upload))
+        self.remove_cover()
+        stem = uuid.uuid4().hex
+        self.image.save(f"{stem}.jpg", _jpeg(source, COVER_MAX, 88)[0], save=False)
+        self.thumb.save(f"{stem}_t.jpg", _jpeg(source, THUMB_MAX, 82)[0], save=False)
+
+    def remove_cover(self):
+        for field in (self.image, self.thumb):
+            if field:
+                field.delete(save=False)
+
+
+def _read_image(upload):
+    try:
+        image = Image.open(upload)
+        image.load()
+    except Exception as exc:  # Pillow raises many different types here
+        raise ValueError("not an image") from exc
+    return image
+
+
+def _upright_rgb(image):
+    image = ImageOps.exif_transpose(image)  # respect phone rotation
+    return image if image.mode == "RGB" else image.convert("RGB")
 
 
 def _exif_date(image):
@@ -157,7 +212,8 @@ def _jpeg(image, max_edge, quality):
 
 
 @receiver(post_delete, sender=Photo)
-def _remove_photo_files(sender, instance, **kwargs):
+@receiver(post_delete, sender=Restaurant)
+def _remove_files(sender, instance, **kwargs):
     for field in (instance.image, instance.thumb):
         if field:
             field.delete(save=False)

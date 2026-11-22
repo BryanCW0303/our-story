@@ -11,6 +11,8 @@ urlpatterns = [
     path("api/config/", views.SiteConfigView.as_view()),
     path("api/places/", views.PlaceListView.as_view()),
     path("api/places/<slug:slug>/photos/", views.PlacePhotosView.as_view()),
+    path("api/places/<slug:slug>/restaurants/", views.PlaceRestaurantsView.as_view()),
     path("api/photos/<int:pk>/", views.PhotoDetailView.as_view()),
+    path("api/restaurants/<int:pk>/", views.RestaurantDetailView.as_view()),
     path("media/<path:path>", views.media),
 ]
