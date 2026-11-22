@@ -1,3 +1,4 @@
+import shutil
 import tempfile
 from datetime import date
 from io import BytesIO
@@ -23,8 +24,16 @@ def _jpeg_upload(size=(3000, 2000), name="a.jpg", taken=None):
     return SimpleUploadedFile(name, buffer.getvalue(), content_type="image/jpeg")
 
 
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+MEDIA_ROOT = tempfile.mkdtemp()  # uploads made by the tests; removed when they finish
+
+
+@override_settings(MEDIA_ROOT=MEDIA_ROOT)
 class ApiTests(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
+
     def setUp(self):
         self.user = get_user_model().objects.create_user("tester", password="a-long-test-passphrase")
         self.tokyo = Place.objects.get(slug="tokyo")
