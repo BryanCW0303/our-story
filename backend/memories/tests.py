@@ -49,6 +49,7 @@ class ApiTests(TestCase):
                 ("trip", "chongqing"),
                 ("trip", "macau"),
                 ("trip", "vancouver-trip"),
+                ("trip", "kyoto"),
             ],
         )
         self.assertEqual({p["photo_count"] for p in places}, {0})

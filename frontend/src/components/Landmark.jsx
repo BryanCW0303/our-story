@@ -122,6 +122,17 @@ const ICONS = {
     <circle cx="60" cy="43" r="10.500" fill="#fffaf2"/>
     <path d="M60 43v-6.500M60 43l4.500 3" stroke-width="2.2"/>
     ${face(60, 70, 6)}`,
+  // 京都：伏見稻荷的鳥居
+  kyoto: `${ground('#c9ddd6')}
+    <path d="M33 108l4-62h11l-2 62z" fill="#e8674a"/>
+    <path d="M74 108l-2-62h11l4 62z" fill="#e8674a"/>
+    <rect x="25" y="54" width="70" height="10" rx="2.500" fill="#e8674a"/>
+    <rect x="54" y="42" width="12" height="12" fill="#f6cf5e" stroke-width="2.2"/>
+    <path d="M17 28q43-11 86 0l-4 16q-39-9-78 0z" fill="#e8674a"/>
+    <path d="M13 24q47-13 94 0l-2 6q-45-12-90 0z" fill="${K}" stroke-width="2"/>
+    <g fill="#5a4336" stroke="none"><rect x="30" y="102" width="19" height="7" rx="2"/><rect x="71" y="102" width="19" height="7" rx="2"/></g>
+    <path d="M103 60l3 5 5 1-4 4 1 5-5-2-5 2 1-5-4-4 5-1z" fill="#f2b872" stroke-width="2"/>
+    ${face(60, 33, 10)}`,
   // 其他地點（之後在後台新增、還沒畫圖示的）：一個圖釘
   fallback: `${ground('#f3d5dc')}
     <path d="M60 102C42 80 32 66 32 50a28 28 0 0 1 56 0c0 16-10 30-28 52z" fill="#f6bccb"/>
