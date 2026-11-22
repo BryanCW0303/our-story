@@ -6,7 +6,8 @@ from pathlib import Path
 from django.core.management.utils import get_random_secret_key
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-FRONTEND_DIST = BASE_DIR.parent / "frontend" / "dist"
+# The built React app. Overridable so a trial build can be served without replacing the live one.
+FRONTEND_DIST = Path(os.environ.get("FRONTEND_DIST", BASE_DIR.parent / "frontend" / "dist"))
 
 
 def _load_env_file(path):
