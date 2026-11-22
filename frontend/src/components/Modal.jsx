@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
-/** Centered dialog. Esc or a click on the backdrop closes it unless `locked`. */
+/**
+ * Centered dialog. Esc or a click on the backdrop closes it unless `locked`.
+ * Rendered straight into <body>, so an animated ancestor cannot throw off its full-screen backdrop.
+ */
 export default function Modal({ title, onClose, locked = false, children }) {
   const panel = useRef(null)
 
@@ -20,7 +24,7 @@ export default function Modal({ title, onClose, locked = false, children }) {
     panel.current?.querySelector('input:not([type=file]), textarea')?.focus()
   }, [])
 
-  return (
+  return createPortal(
     <div
       className="backdrop"
       onMouseDown={(event) => {
@@ -36,6 +40,7 @@ export default function Modal({ title, onClose, locked = false, children }) {
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
