@@ -74,12 +74,13 @@ function Timeline({ place, photos, authed, focusId }) {
 }
 
 /** The place's favourite restaurants as a wall of covers. */
-function Restaurants({ place, restaurants }) {
+function Restaurants({ place, restaurants, authed }) {
   if (!restaurants) return <p className="muted center">載入中…</p>
   if (!restaurants.length) {
     return (
       <div className="empty">
         <p>這裡還沒有餐廳。</p>
+        <p className="muted">{authed ? '按「新增餐廳」記下第一間。' : '登入後就可以新增。'}</p>
       </div>
     )
   }
@@ -97,7 +98,7 @@ function Restaurants({ place, restaurants }) {
 }
 
 /** One place, in two tabs: its photos on a timeline, and its favourite restaurants. */
-export default function PlacePage({ place, tab, photos, restaurants, authed, focusId, onUpload }) {
+export default function PlacePage({ place, tab, photos, restaurants, authed, focusId, onUpload, onAddRestaurant }) {
   const kindName = KINDS.find((group) => group.kind === place.kind)?.name
   const onFood = tab === 'food'
 
@@ -114,11 +115,17 @@ export default function PlacePage({ place, tab, photos, restaurants, authed, foc
             {kindName} · {place.photo_count} 張照片 · {place.restaurant_count} 間喜歡的餐廳
           </p>
         </div>
-        {authed && !onFood && (
+        {authed && (
           <div className="actions">
-            <button className="btn primary" onClick={onUpload}>
-              <Icon name="upload" /> 上傳照片
-            </button>
+            {onFood ? (
+              <button className="btn primary" onClick={onAddRestaurant}>
+                <Icon name="plus" /> 新增餐廳
+              </button>
+            ) : (
+              <button className="btn primary" onClick={onUpload}>
+                <Icon name="upload" /> 上傳照片
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -135,7 +142,7 @@ export default function PlacePage({ place, tab, photos, restaurants, authed, foc
       </nav>
 
       {onFood ? (
-        <Restaurants place={place} restaurants={restaurants} />
+        <Restaurants place={place} restaurants={restaurants} authed={authed} />
       ) : (
         <Timeline place={place} photos={photos} authed={authed} focusId={focusId} />
       )}

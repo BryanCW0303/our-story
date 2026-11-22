@@ -7,6 +7,7 @@ import Icon from './components/Icon.jsx'
 import LoginForm from './components/LoginForm.jsx'
 import PhotoPage from './components/PhotoPage.jsx'
 import PlacePage from './components/PlacePage.jsx'
+import RestaurantForm from './components/RestaurantForm.jsx'
 import RestaurantPage from './components/RestaurantPage.jsx'
 import SettingsForm from './components/SettingsForm.jsx'
 import UploadForm from './components/UploadForm.jsx'
@@ -41,7 +42,7 @@ export default function App() {
   const [album, setAlbum] = useState({ slug: null, photos: null }) // the photos of the place being viewed
   const [menu, setMenu] = useState({ slug: null, restaurants: null }) // and its favourite restaurants
   const [error, setError] = useState('')
-  const [modal, setModal] = useState(null) // 'login' | 'settings' | 'upload'
+  const [modal, setModal] = useState(null) // 'login' | 'settings' | 'upload' | 'restaurant'
   const current = useRef(route) // the route as of the last navigation, for the listeners below
   const lastPhoto = useRef(null) // the photo just left, so its place's timeline can scroll back to it
 
@@ -187,6 +188,7 @@ export default function App() {
         authed={authed}
         focusId={lastPhoto.current}
         onUpload={() => setModal('upload')}
+        onAddRestaurant={() => setModal('restaurant')}
       />
     )
   } else if (!photos) {
@@ -272,6 +274,16 @@ export default function App() {
           place={place}
           onClose={() => setModal(null)}
           onUploaded={(photo) => updatePhotos((list) => [...list, photo])}
+        />
+      )}
+      {modal === 'restaurant' && place && (
+        <RestaurantForm
+          place={place}
+          onClose={() => setModal(null)}
+          onSaved={(saved) => {
+            updateRestaurants((list) => [...list, saved])
+            setModal(null)
+          }}
         />
       )}
     </>

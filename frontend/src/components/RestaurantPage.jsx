@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { api } from '../api.js'
 import Icon from './Icon.jsx'
 import Modal from './Modal.jsx'
+import RestaurantForm from './RestaurantForm.jsx'
 
 const NOTE_MAX = 500
 
@@ -19,7 +20,7 @@ export function RestaurantArt({ restaurant, large = false }) {
 /** One favourite restaurant: its cover on the left; what kind, where, what to order and our note on the right. */
 export default function RestaurantPage({ place, restaurant, authed, onChanged, onDeleted }) {
   const [draft, setDraft] = useState(null) // the note text while it is being edited
-  const [dialog, setDialog] = useState(null) // 'delete'
+  const [dialog, setDialog] = useState(null) // 'edit' | 'delete'
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const field = useRef(null)
@@ -142,6 +143,9 @@ export default function RestaurantPage({ place, restaurant, authed, onChanged, o
                   <button className="btn primary" onClick={() => setDraft(restaurant.note)}>
                     <Icon name="pencil" /> {restaurant.note ? '編輯留言' : '寫留言'}
                   </button>
+                  <button className="btn ghost" onClick={() => setDialog('edit')}>
+                    編輯餐廳
+                  </button>
                   <button className="btn ghost danger" onClick={() => setDialog('delete')}>
                     <Icon name="trash" /> 刪除
                   </button>
@@ -152,6 +156,17 @@ export default function RestaurantPage({ place, restaurant, authed, onChanged, o
         </div>
       </div>
 
+      {dialog === 'edit' && (
+        <RestaurantForm
+          place={place}
+          restaurant={restaurant}
+          onClose={() => setDialog(null)}
+          onSaved={(saved) => {
+            onChanged(saved)
+            setDialog(null)
+          }}
+        />
+      )}
       {dialog === 'delete' && (
         <Modal title="刪除這間餐廳？" onClose={() => setDialog(null)} locked={busy}>
           <p className="muted">餐廳的資料、封面和留言會一起刪除，刪除後無法復原。</p>
