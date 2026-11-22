@@ -65,7 +65,7 @@ function Note({ photo, authed, onChanged, onDeleted, onBusy }) {
         ) : photo.note ? (
           <>
             <p>{photo.note}</p>
-            <p className="sign">—— {photo.note_by}</p>
+            {photo.note_by && <p className="sign">—— {photo.note_by}</p>}
           </>
         ) : (
           <p className="none">這張照片還沒有留言。</p>
