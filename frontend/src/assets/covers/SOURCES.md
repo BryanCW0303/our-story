@@ -19,3 +19,5 @@
 | game-feed-the-cups.jpg | https://cdn.akamai.steamstatic.com/steam/apps/2336220/library_600x900.jpg |
 | game-overcooked-2.jpg | https://cdn.akamai.steamstatic.com/steam/apps/728880/library_600x900.jpg |
 | game-stardew-valley.jpg | https://cdn.akamai.steamstatic.com/steam/apps/413150/library_600x900.jpg |
+| game-rhythm-heaven-groove.jpg | https://cdn.thegamesdb.net/images/original/boxart/front/136425-1.jpg |
+| game-nintendo-switch-sports.jpg | https://cdn.thegamesdb.net/images/original/boxart/front/97748-1.jpg |

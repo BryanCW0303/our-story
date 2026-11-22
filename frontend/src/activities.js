@@ -56,6 +56,8 @@ export const ACTIVITIES = [
       { cover: 'game-feed-the-cups', title: '杯杯倒滿', sub: 'Feed the Cups' },
       { cover: 'game-overcooked-2', title: 'Overcooked! 2', sub: '煮過頭 2' },
       { cover: 'game-stardew-valley', title: '星露谷物語', sub: 'Stardew Valley' },
+      { cover: 'game-rhythm-heaven-groove', title: '節奏天國 奇蹟之星', sub: 'Rhythm Heaven Groove' },
+      { cover: 'game-nintendo-switch-sports', title: 'Nintendo Switch 運動', sub: 'Nintendo Switch Sports' },
     ],
   },
 ]
