@@ -19,5 +19,8 @@ cd backend
 .venv/bin/python manage.py collectstatic --noinput >/dev/null
 
 # Only listens on this computer; the Cloudflare Tunnel is what makes it public.
+# Threaded workers: a photo coming in over a slow connection can take minutes, and must neither
+# be cut off by the worker timeout nor keep everyone else waiting.
 exec .venv/bin/gunicorn config.wsgi \
-  --bind "127.0.0.1:${PORT:-8010}" --workers 2 --timeout 120 --access-logfile -
+  --bind "127.0.0.1:${PORT:-8010}" --workers 2 --worker-class gthread --threads 4 --timeout 120 \
+  --access-logfile -
