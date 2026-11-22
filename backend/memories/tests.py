@@ -5,6 +5,7 @@ from io import BytesIO
 from pathlib import Path
 
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from PIL import ExifTags, Image
@@ -35,6 +36,7 @@ class ApiTests(TestCase):
         shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
 
     def setUp(self):
+        cache.clear()  # the login throttle counts attempts in the cache
         self.user = get_user_model().objects.create_user("tester", password="a-long-test-passphrase")
         self.tokyo = Place.objects.get(slug="tokyo")
         self.anon = APIClient()
@@ -240,3 +242,25 @@ class ApiTests(TestCase):
         token = client.cookies["csrftoken"].value  # rotated on login
         self.assertEqual(client.post("/api/logout/", HTTP_X_CSRFTOKEN=token).status_code, 200)
         self.assertFalse(client.get("/api/session/").json()["authenticated"])
+
+    def test_admin_login_attempts_are_limited(self):
+        guess = {"username": "tester", "password": "wrong"}
+        for _ in range(10):
+            self.assertEqual(self.anon.post("/admin/login/", guess).status_code, 200)  # the form again, with an error
+        blocked = self.anon.post("/admin/login/", guess)
+        self.assertEqual(blocked.status_code, 429)
+        self.assertIn("Retry-After", blocked)
+        # Even the right password has to wait, and the API's login shares the same allowance.
+        right = {"username": "tester", "password": "a-long-test-passphrase"}
+        self.assertEqual(self.anon.post("/admin/login/", right).status_code, 429)
+        self.assertEqual(self.anon.post("/api/login/", right, format="json").status_code, 429)
+        # Only password attempts are limited: the page itself and the rest of the site still load.
+        self.assertEqual(self.anon.get("/admin/login/").status_code, 200)
+        self.assertEqual(self.anon.get("/api/places/").status_code, 200)
+
+    def test_admin_login_still_works_within_the_limit(self):
+        get_user_model().objects.create_superuser("boss", password="yet-another-long-passphrase")
+        client = APIClient()
+        response = client.post("/admin/login/", {"username": "boss", "password": "yet-another-long-passphrase"})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(client.get("/admin/").status_code, 200)
