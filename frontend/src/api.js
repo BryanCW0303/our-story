@@ -1,5 +1,11 @@
 // Thin wrapper around fetch for the Django API (session cookie + CSRF token).
 
+/**
+ * Fired on `window` when the server refuses a request as not signed in: the session ran out, or was
+ * ended from another device. The app listens for it and asks the server again who is signed in.
+ */
+export const REFUSED = 'memories:refused'
+
 function csrfToken() {
   const match = document.cookie.match(/(?:^|; )csrftoken=([^;]+)/)
   return match ? decodeURIComponent(match[1]) : ''
@@ -35,6 +41,7 @@ export async function api(path, { method = 'GET', json, form } = {}) {
   }
   if (response.status === 204) return null
   const data = await response.json().catch(() => null)
+  if (response.status === 403) window.dispatchEvent(new Event(REFUSED))
   if (!response.ok) throw new Error(errorMessage(data, response.status))
   return data
 }

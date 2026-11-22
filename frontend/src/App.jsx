@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ACTIVITIES } from './activities.js'
-import { api } from './api.js'
+import { api, REFUSED } from './api.js'
 import ActivityPage from './components/ActivityPage.jsx'
 import Home from './components/Home.jsx'
 import Icon from './components/Icon.jsx'
@@ -89,6 +89,19 @@ export default function App() {
   useEffect(() => {
     if (config?.title) document.title = config.title
   }, [config])
+
+  // A refused request means the page's idea of who is signed in is out of date (the session ran out,
+  // or was ended elsewhere): ask again, so the login button comes back instead of every save failing.
+  useEffect(() => {
+    const refresh = () => {
+      api('session/')
+        .then(setSession)
+        .catch(() => {})
+      loadPlaces()
+    }
+    window.addEventListener(REFUSED, refresh)
+    return () => window.removeEventListener(REFUSED, refresh)
+  }, [loadPlaces])
 
   // Load the place's photos; again after logging in or out, since that changes what is visible.
   const slug = place?.slug ?? null
