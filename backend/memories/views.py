@@ -2,13 +2,14 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Count, Max, Min, Q
 from django.http import FileResponse, Http404
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from rest_framework import generics, permissions, serializers, status
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from .models import Photo, Place, Restaurant, SiteConfig
@@ -39,12 +40,8 @@ class SessionView(APIView):
 @method_decorator(csrf_protect, name="dispatch")
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [ScopedRateThrottle]
     throttle_scope = "login"
-
-    def get_throttles(self):
-        from rest_framework.throttling import ScopedRateThrottle
-
-        return [ScopedRateThrottle()]
 
     def post(self, request):
         # A body that is valid JSON but not an object (a list, a number) carries no credentials.
@@ -83,7 +80,6 @@ def _visible_photos(request):
 
 class PlaceListView(generics.ListAPIView):
     serializer_class = PlaceSerializer
-    pagination_class = None
 
     def get_queryset(self):
         # The count and dates must not reveal anything about a place's private photos.
@@ -102,7 +98,6 @@ class PlacePhotosView(generics.ListAPIView):
     """GET: every photo of one place, oldest first. POST: upload one more."""
 
     serializer_class = PhotoSerializer
-    pagination_class = None
     parser_classes = [MultiPartParser]
 
     def get_queryset(self):
@@ -167,7 +162,6 @@ class PlaceRestaurantsView(generics.ListCreateAPIView):
     """GET: the favourite restaurants of one place, in the order they were added. POST: add one."""
 
     serializer_class = RestaurantSerializer
-    pagination_class = None
     parser_classes = [MultiPartParser, JSONParser]
 
     def get_queryset(self):

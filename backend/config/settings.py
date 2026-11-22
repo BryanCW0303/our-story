@@ -139,6 +139,7 @@ def WHITENOISE_IMMUTABLE_FILE_TEST(path, url):
     # Vite puts a content hash in every file name under /assets/, so they never change.
     return url.startswith("/assets/")
 
+
 # Uploaded photos. Served by memories.views.media so private photos stay private.
 MEDIA_ROOT = DATA_DIR / "media"
 MEDIA_URL = "/media/"
@@ -150,8 +151,6 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 20,
     "DEFAULT_THROTTLE_RATES": {"login": "10/min"},
     # Behind the tunnel the real visitor IP is the last entry of X-Forwarded-For.
     "NUM_PROXIES": 1,
