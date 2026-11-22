@@ -813,12 +813,6 @@ section + .divider {
   text-overflow: ellipsis;
 }
 
-.cap em {
-  font-style: normal;
-  color: var(--accent);
-  margin-right: 8px;
-}
-
 .cap .icon {
   margin-right: 5px;
   color: var(--ink-faint);

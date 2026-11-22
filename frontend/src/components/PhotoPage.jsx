@@ -198,7 +198,7 @@ export default function PhotoPage({ place, photos, index, authed, onStep, onChan
         </div>
         <div>
           <div className="stamp">
-            <span className="date">{photo.taken_on.replaceAll('-', '.')}</span>
+            <span className="date">{photo.taken_on.slice(0, 7).replace('-', '.')}</span>
             <span className="where">
               <Icon name="pin" /> {place.name}
             </span>

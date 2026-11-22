@@ -16,7 +16,6 @@ function byMonth(photos) {
 }
 
 const monthLabel = (key) => `${key.slice(0, 4)} 年 ${Number(key.slice(5))} 月`
-const dayLabel = (date) => `${Number(date.slice(5, 7))}/${Number(date.slice(8))}`
 
 /** The photo timeline, grouped by month. `focusId` is the photo to scroll back to. */
 function Timeline({ place, photos, authed, focusId }) {
@@ -56,11 +55,10 @@ function Timeline({ place, photos, authed, focusId }) {
                 id={`photo-${photo.id}`}
                 href={`#/p/${place.slug}/${photo.id}`}
                 key={photo.id}
-                aria-label={`${photo.taken_on} 的照片`}
+                aria-label={`${monthLabel(month.key)}的照片`}
               >
                 <img src={photo.thumb} alt="" loading="lazy" />
                 <span className="cap">
-                  <em>{dayLabel(photo.taken_on)}</em>
                   {!photo.is_public && <Icon name="lock" />}
                   {photo.note || <span className="none">還沒有留言</span>}
                 </span>
