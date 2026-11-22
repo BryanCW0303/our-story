@@ -44,9 +44,14 @@ class SiteConfig(models.Model):
 class Place(models.Model):
     """A city on the home page. The frontend draws its landmark icon from `slug`."""
 
+    class Kind(models.TextChoices):
+        HOME = "home", "居住地"
+        TRIP = "trip", "旅遊地點"
+
     slug = models.SlugField("代號", unique=True, help_text="網址和圖示用的英文代號，例如 tokyo")
     name = models.CharField("名稱", max_length=40)
     name_en = models.CharField("英文名稱", max_length=40, blank=True)
+    kind = models.CharField("類別", max_length=8, choices=Kind.choices, default=Kind.TRIP)
     color = models.CharField("圖示底色", max_length=7, default="#f6e0d6")
     order = models.PositiveSmallIntegerField("排序", default=0)
 

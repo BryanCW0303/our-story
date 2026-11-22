@@ -24,7 +24,7 @@ class PlaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Place
-        fields = ["slug", "name", "name_en", "color", "photo_count", "first_photo", "last_photo"]
+        fields = ["slug", "name", "name_en", "kind", "color", "photo_count", "first_photo", "last_photo"]
 
 
 class PhotoSerializer(serializers.ModelSerializer):

@@ -4,6 +4,12 @@ import { Badge } from './Landmark.jsx'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
+/** The two groups of places on the home page, in display order. */
+export const KINDS = [
+  { kind: 'home', name: '居住地', sub: '一起生活過的城市', icon: 'home' },
+  { kind: 'trip', name: '旅遊地點', sub: '一起旅行去過的地方', icon: 'plane' },
+]
+
 function daysTogether(startDate) {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -52,6 +58,14 @@ function Footprints({ places }) {
             <span>張照片</span>
           </div>
         </div>
+        <p className="kinds">
+          {KINDS.map((group) => (
+            <span key={group.kind}>
+              <Icon name={group.icon} />
+              {group.name} {withPhotos.filter((place) => place.kind === group.kind).length}
+            </span>
+          ))}
+        </p>
         <p className="span">{span}</p>
         <div className="path">
           {stops.map(({ place, first }) => (
@@ -107,16 +121,28 @@ export default function Home({ config, places, authed, onOpenSettings }) {
       </div>
       <h2 className="sec">我們去過的地方</h2>
       <p className="sub">點一個地方，看看那裡的我們</p>
-      <div className="places">
-        {places?.map((place) => (
-          <a className="place" href={`#/p/${place.slug}`} key={place.slug}>
-            <Badge place={place} />
-            <b>{place.name}</b>
-            <span className="en">{place.name_en}</span>
-            <span className="meta">{place.photo_count} 張照片</span>
-          </a>
+      {places &&
+        KINDS.map((group) => (
+          <section key={group.kind}>
+            <h3 className="group">
+              <Icon name={group.icon} />
+              {group.name}
+            </h3>
+            <p className="group-sub">{group.sub}</p>
+            <div className="places">
+              {places
+                .filter((place) => place.kind === group.kind)
+                .map((place) => (
+                  <a className="place" href={`#/p/${place.slug}`} key={place.slug}>
+                    <Badge place={place} />
+                    <b>{place.name}</b>
+                    <span className="en">{place.name_en}</span>
+                    <span className="meta">{place.photo_count} 張照片</span>
+                  </a>
+                ))}
+            </div>
+          </section>
         ))}
-      </div>
     </>
   )
 }

@@ -5,8 +5,9 @@ from .models import Photo, Place, SiteConfig
 
 @admin.register(Place)
 class PlaceAdmin(admin.ModelAdmin):
-    list_display = ["name", "name_en", "slug", "order"]
+    list_display = ["name", "name_en", "kind", "slug", "order"]
     list_editable = ["order"]
+    list_filter = ["kind"]
 
 
 @admin.register(Photo)

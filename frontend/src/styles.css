@@ -295,6 +295,32 @@ main {
   font-size: 17px;
 }
 
+.group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 44px 0 2px;
+  font-family: var(--serif);
+  font-size: 20px;
+}
+
+.group .icon {
+  color: var(--accent);
+}
+
+.sub + section .group {
+  margin-top: 0;
+}
+
+.group-sub {
+  margin: 0 0 22px;
+  text-align: center;
+  font-family: var(--hand);
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
 /* ---------- 首頁：足跡總結 ---------- */
 
 .trail-card {
@@ -333,8 +359,27 @@ main {
   color: var(--line);
 }
 
+.kinds {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 22px 0 0;
+}
+
+.kinds span {
+  padding: 5px 16px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.kinds .icon {
+  margin-right: 6px;
+}
+
 .span {
-  margin: 24px 0 30px;
+  margin: 16px 0 30px;
   font-family: var(--hand);
   font-size: 17px;
   color: var(--ink-soft);

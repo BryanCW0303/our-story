@@ -19,14 +19,6 @@ const ICONS = {
     <rect x="24" y="33" width="72" height="25" rx="12.5" fill="#f2b872"/>
     <circle cx="60" cy="8" r="3" fill="#ef8f7d"/>
     ${face(60, 43, 9)}`,
-  // 溫哥華：科學世界球形館和雪山
-  vancouver: `<path d="M6 100L32 54l13 20 13-18 28 44z" fill="#b9cfdc"/>
-    <path d="M25 66l7-12 7 11-7-3z" fill="#fff" stroke-width="2"/>
-    <rect x="36" y="92" width="64" height="16" rx="6" fill="#f6e3c5"/>
-    <circle cx="68" cy="64" r="32" fill="#e2ebf0"/>
-    <path d="M38 53h60M40 80h56M68 32L48 53l20 27 20-27zM48 53l-8 27M88 53l8 27M68 80v16" stroke-width="1.5" opacity=".3"/>
-    <path d="M100 22l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="#ef8f7d" stroke-width="2"/>
-    ${face(68, 62, 9)}`,
   // 廣州：廣州塔（小蠻腰）
   guangzhou: `${ground('#f3d5dc')}
     <path d="M60 6v20"/>
@@ -35,6 +27,28 @@ const ICONS = {
     <path d="M90 28v10M85 33h10M26 48v8M22 52h8" stroke="#f2b872" stroke-width="2.6"/>
     <circle cx="60" cy="6" r="3" fill="#f2b872"/>
     ${face(60, 88, 7)}`,
+  // 溫哥華：科學世界球形館和雪山
+  vancouver: `<path d="M6 100L32 54l13 20 13-18 28 44z" fill="#b9cfdc"/>
+    <path d="M25 66l7-12 7 11-7-3z" fill="#fff" stroke-width="2"/>
+    <rect x="36" y="92" width="64" height="16" rx="6" fill="#f6e3c5"/>
+    <circle cx="68" cy="64" r="32" fill="#e2ebf0"/>
+    <path d="M38 53h60M40 80h56M68 32L48 53l20 27 20-27zM48 53l-8 27M88 53l8 27M68 80v16" stroke-width="1.5" opacity=".3"/>
+    <path d="M100 22l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="#ef8f7d" stroke-width="2"/>
+    ${face(68, 62, 9)}`,
+  // 東京：東京鐵塔和櫻花
+  tokyo: `${ground('#f6d6d2')}
+    <path d="M60 6v16"/>
+    <path d="M46 71h28l18 37H76Q60 80 44 108H28z" fill="#f08f7e"/>
+    <path d="M53 22h14l7 40H46z" fill="#f08f7e"/>
+    <path d="M52 28h16l1.400 8H50.600z" fill="#fffaf2" stroke-width="2"/>
+    <rect x="40" y="60" width="40" height="11" rx="4.500" fill="#fffaf2"/>
+    <path d="M51 80h18M42 94h9M69 94h9" stroke="#fff" stroke-width="1.8" opacity=".85"/>
+    <g fill="#f8c9d4" stroke-width="2">
+      <circle cx="98" cy="30" r="6"/><circle cx="22" cy="52" r="4.500"/>
+    </g>
+    <g fill="#f8c9d4" stroke="none"><circle cx="106" cy="46" r="2.600"/><circle cx="90" cy="48" r="2.200"/><circle cx="30" cy="38" r="2.200"/></g>
+    <circle cx="98" cy="30" r="1.600" fill="#ef8f7d" stroke="none"/><circle cx="22" cy="52" r="1.300" fill="#ef8f7d" stroke="none"/>
+    ${face(60, 49, 6)}`,
   // 香港：中環（中銀大廈、國金二期、摩天輪）
   hongkong: `<path d="M22 106V54l20-20v72z" fill="#cfe2d4"/>
     <path d="M22 54l20 22M42 54L22 76M22 78l20 22M42 78L22 100" stroke-width="1.5" opacity=".35"/>
@@ -76,20 +90,20 @@ const ICONS = {
     </g>
     <path d="M56 58h34M56 66h34M56 74h34" stroke-width="1.6" opacity=".25"/>
     ${face(26, 60, 6)}`,
-  // 東京：東京鐵塔和櫻花
-  tokyo: `${ground('#f6d6d2')}
-    <path d="M60 6v16"/>
-    <path d="M46 71h28l18 37H76Q60 80 44 108H28z" fill="#f08f7e"/>
-    <path d="M53 22h14l7 40H46z" fill="#f08f7e"/>
-    <path d="M52 28h16l1.400 8H50.600z" fill="#fffaf2" stroke-width="2"/>
-    <rect x="40" y="60" width="40" height="11" rx="4.500" fill="#fffaf2"/>
-    <path d="M51 80h18M42 94h9M69 94h9" stroke="#fff" stroke-width="1.8" opacity=".85"/>
-    <g fill="#f8c9d4" stroke-width="2">
-      <circle cx="98" cy="30" r="6"/><circle cx="22" cy="52" r="4.500"/>
+  // 澳門：大三巴牌坊
+  macau: `${ground('#d9d0e6')}
+    <path d="M24 109l8-11h56l8 11z" fill="#dccfb6"/>
+    <rect x="32" y="64" width="56" height="34" fill="#efe2c8"/>
+    <g fill="#8a6a58" stroke-width="2">
+      <path d="M40 98V86a5 5 0 0 1 10 0v12z"/><path d="M54 98V83a6 6 0 0 1 12 0v15z"/><path d="M70 98V86a5 5 0 0 1 10 0v12z"/>
     </g>
-    <g fill="#f8c9d4" stroke="none"><circle cx="106" cy="46" r="2.600"/><circle cx="90" cy="48" r="2.200"/><circle cx="30" cy="38" r="2.200"/></g>
-    <circle cx="98" cy="30" r="1.600" fill="#ef8f7d" stroke="none"/><circle cx="22" cy="52" r="1.300" fill="#ef8f7d" stroke="none"/>
-    ${face(60, 49, 6)}`,
+    <rect x="36" y="44" width="48" height="20" fill="#f8eed9"/>
+    <rect x="43" y="30" width="34" height="14" fill="#efe2c8"/>
+    <g fill="#8a6a58" stroke-width="1.8"><rect x="49" y="34" width="5" height="7" rx="2.500"/><rect x="66" y="34" width="5" height="7" rx="2.500"/></g>
+    <path d="M47 30l13-14 13 14z" fill="#f8eed9"/>
+    <path d="M60 16V5M56 9h8"/>
+    <path d="M98 30l2.500 5 5 2.500-5 2.500-2.500 5-2.500-5-5-2.500 5-2.500z" fill="#f2b872" stroke-width="2"/>
+    ${face(60, 51, 8)}`,
   // 其他地點（之後在後台新增、還沒畫圖示的）：一個圖釘
   fallback: `${ground('#f3d5dc')}
     <path d="M60 102C42 80 32 66 32 50a28 28 0 0 1 56 0c0 16-10 30-28 52z" fill="#f6bccb"/>

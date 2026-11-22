@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
+import { KINDS } from './Home.jsx'
 import Icon from './Icon.jsx'
 import { Badge } from './Landmark.jsx'
 
@@ -20,6 +21,7 @@ const dayLabel = (date) => `${Number(date.slice(5, 7))}/${Number(date.slice(8))}
 export default function PlacePage({ place, photos, authed, focusId, onUpload }) {
   const months = useMemo(() => byMonth(photos ?? []), [photos])
   const scrolled = useRef(false)
+  const kindName = KINDS.find((group) => group.kind === place.kind)?.name
 
   useEffect(() => {
     if (scrolled.current || !photos || !focusId) return
@@ -38,7 +40,7 @@ export default function PlacePage({ place, photos, authed, focusId, onUpload }) 
           <h1>{place.name}</h1>
           {photos && (
             <p>
-              {photos.length} 張照片{months.length > 0 && ` · ${months.length} 個月份`}
+              {kindName} · {photos.length} 張照片{months.length > 0 && ` · ${months.length} 個月份`}
             </p>
           )}
         </div>

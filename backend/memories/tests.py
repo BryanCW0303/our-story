@@ -35,11 +35,20 @@ class ApiTests(TestCase):
     def _photo(self, taken_on, **extra):
         return Photo.from_upload(self.tokyo, _jpeg_upload(size=(400, 300)), fallback_date=taken_on, **extra)
 
-    def test_the_seven_places_are_seeded_in_order(self):
+    def test_places_are_seeded_by_kind_in_order(self):
         places = self.anon.get("/api/places/").json()
         self.assertEqual(
-            [p["slug"] for p in places],
-            ["seattle", "vancouver", "guangzhou", "hongkong", "chengdu", "chongqing", "tokyo"],
+            [(p["kind"], p["slug"]) for p in places],
+            [
+                ("home", "seattle"),
+                ("home", "guangzhou"),
+                ("home", "vancouver"),
+                ("home", "tokyo"),
+                ("trip", "hongkong"),
+                ("trip", "chengdu"),
+                ("trip", "chongqing"),
+                ("trip", "macau"),
+            ],
         )
         self.assertEqual({p["photo_count"] for p in places}, {0})
         self.assertEqual({p["first_photo"] for p in places}, {None})
