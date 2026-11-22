@@ -31,7 +31,7 @@ function placeSpan(place) {
 const monthLabel = (date) => `${date.slice(0, 4)} 年 ${Number(date.slice(5, 7))} 月`
 
 /**
- * How many places, photos and activities so far, and the places as a route in the order they were first visited.
+ * How many places, photos, restaurants and activities so far, and the places as a route in the order they were first visited.
  * "First visited" is the date of a place's earliest photo. A city listed under both kinds
  * (Vancouver) is one place and one stop here, dated by the earliest photo of either.
  */
@@ -72,6 +72,11 @@ function Footprints({ places }) {
           <div className="stat">
             <strong>{total.toLocaleString()}</strong>
             <span>張照片</span>
+          </div>
+          <Icon name="heart" />
+          <div className="stat">
+            <strong>{places.reduce((sum, place) => sum + place.restaurant_count, 0).toLocaleString()}</strong>
+            <span>間餐廳</span>
           </div>
           <Icon name="heart" />
           <div className="stat">

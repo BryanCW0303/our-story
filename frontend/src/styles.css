@@ -329,7 +329,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 48px;
+  gap: 40px;
 }
 
 .stat strong {
@@ -1182,12 +1182,22 @@ section + .divider {
     margin-bottom: 44px;
   }
 
+  /* 四個數字在手機上排成一列，中間的愛心放不下 */
   .stats {
-    gap: 14px;
+    gap: 0;
+    justify-content: space-around;
+  }
+
+  .stats > .icon {
+    display: none;
   }
 
   .stat strong {
-    font-size: 40px;
+    font-size: 36px;
+  }
+
+  .stat span {
+    font-size: 14px;
   }
 
   .path {
