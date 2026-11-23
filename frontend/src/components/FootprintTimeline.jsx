@@ -3,7 +3,20 @@ import { Badge } from './Landmark.jsx'
 import './FootprintTimeline.css'
 
 const months = Array.from({ length: 12 }, (_, i) => i + 1)
-const photoMonths = (place) => place.photo_months ?? place.trip_months ?? []
+function timelineMonths(place, today) {
+  if (place.kind !== 'now') return place.photo_months ?? place.trip_months ?? []
+  if (!place.first_photo) return []
+
+  const [firstYear, firstMonth] = place.first_photo.split('-').map(Number)
+  const marked = []
+  const end = today.getFullYear() * 12 + today.getMonth()
+  for (let index = firstYear * 12 + firstMonth - 1; index <= end; index++) {
+    const year = Math.floor(index / 12)
+    const month = String(index % 12 + 1).padStart(2, '0')
+    marked.push(year + '-' + month)
+  }
+  return marked
+}
 
 function City({ place, english = false }) {
   return <a className="timeline-city" href={'#/p/' + place.slug}>
@@ -13,12 +26,14 @@ function City({ place, english = false }) {
 
 export default function FootprintTimeline({ places }) {
   const [selection, setSelection] = useState('')
-  const years = [...new Set(places.flatMap(photoMonths).map((date) => date.slice(0, 4)))].sort().reverse()
+  const today = new Date()
+  const entries = places.map((place) => ({ place, marked: timelineMonths(place, today) }))
+  const years = [...new Set(entries.flatMap(({ marked }) => marked).map((date) => date.slice(0, 4)))].sort().reverse()
   const year = years.includes(selection) ? selection : years[0]
   const homes = places.filter((place) => place.kind === 'now')
-  const rows = places.map((place) => ({
+  const rows = entries.map(({ place, marked }) => ({
     place,
-    recorded: photoMonths(place).filter((date) => date.slice(0, 4) === year).map((date) => Number(date.slice(5))),
+    recorded: marked.filter((date) => date.slice(0, 4) === year).map((date) => Number(date.slice(5))),
   })).filter(({ recorded }) => recorded.length)
   const residences = rows.filter(({ place }) => place.kind !== 'trip')
   const stops = months.map((month) => ({
@@ -40,15 +55,15 @@ export default function FootprintTimeline({ places }) {
       </select>}
     </div>
     <h5>居住地</h5>
-    {residences.length ? <><table className="residence-months" aria-label={year + ' 年居住地照片月份'}>
+    {residences.length ? <><table className="residence-months" aria-label={year + ' 年居住地月份'}>
       <thead><tr><th scope="col">月份</th>{months.map((m) => <th scope="col" key={m}>{m}</th>)}</tr></thead>
       <tbody>{residences.map(({ place, recorded }) => <tr key={place.slug}>
         <th scope="row"><City place={place} /></th>
-        {months.map((m) => <td key={m} aria-label={recorded.includes(m) ? '有照片' : '無照片'}>
+        {months.map((m) => <td key={m} aria-label={recorded.includes(m) ? (place.kind === 'now' ? '居住中' : '有照片') : '無標記'}>
           {recorded.includes(m) && <i aria-hidden="true" />}
         </td>)}
       </tr>)}</tbody>
-    </table><p>每個方塊代表該月有居住地照片。</p></> : <p>尚無居住地照片。</p>}
+    </table><p>現居地從第一張照片的月份標到本月；曾居地標示有照片的月份。</p></> : <p>尚無居住地照片。</p>}
     <h4 className="journey-heading">旅遊地</h4>
     {stops.length ? <ol className="travel-trail" aria-label="按照片月份排列的旅遊足跡">
       {stops.map(({ month, cities }) => <li key={month} style={{ flexGrow: cities.length }}>
