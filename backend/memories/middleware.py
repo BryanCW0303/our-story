@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponse
 from django.urls import reverse
 from rest_framework.throttling import SimpleRateThrottle
@@ -34,13 +35,22 @@ def admin_login_throttle(get_response):
 
 
 def member_content(get_response):
-    """Keep member bundles, API responses and uploads out of shared caches."""
+    """Serve the entry document for this worker's asset index and protect member content."""
+    # WhiteNoise indexes asset filenames at startup. Pin the HTML to the same
+    # build so rebuilding dist cannot advertise chunks the worker cannot serve.
+    entry = settings.FRONTEND_DIST / "index.html"
+    index_html = entry.read_bytes() if entry.is_file() else None
+
     def middleware(request):
-        if request.path.startswith("/members/") and not request.user.is_authenticated:
+        if index_html is not None and request.path in ("/", "/index.html") and request.method in ("GET", "HEAD"):
+            response = HttpResponse(index_html, content_type="text/html; charset=utf-8")
+        elif request.path.startswith("/members/") and not request.user.is_authenticated:
             response = HttpResponse(status=404)
         else:
             response = get_response(request)
-        if request.path.startswith(("/members/", "/api/", "/media/")):
+        if (request.path in ("/", "/index.html")
+                or request.path.startswith(("/members/", "/api/", "/media/"))
+                or (request.path.startswith("/assets/") and response.status_code >= 400)):
             response["Cache-Control"] = "private, no-store"
         return response
 

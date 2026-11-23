@@ -44,7 +44,7 @@ export default function SessionGate() {
 
   if (session?.authenticated) {
     return (
-      <Suspense fallback={null}>
+      <Suspense fallback={<p className="center" role="status">正在載入相簿…</p>}>
         <MemberApp key={session.username} onLoggedOut={() => changeSession(null)} />
       </Suspense>
     )
