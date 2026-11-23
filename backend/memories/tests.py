@@ -122,6 +122,37 @@ class ApiTests(TestCase):
         self.assertEqual((data["note"], data["note_by"]), ("櫻花", "tester"))
         self.assertTrue(data["image"].startswith("/media/photos/tokyo/"))
 
+    def test_heic_and_jpeg_uploads_read_alternative_capture_tags(self):
+        tag = ExifTags.Base
+        packet = (
+            b'<rdf:Description xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" '
+            b'xmlns:exif="http://ns.adobe.com/exif/1.0/" '
+            b'exif:DateTimeOriginal="2025-02-10T23:55:00-08:00"/>'
+        )
+        for fmt, ext in (("HEIF", "heic"), ("JPEG", "jpg")):
+            for source in ("flat", "digitized", "xmp", "malformed", "missing"):
+                with self.subTest(fmt=fmt, source=source):
+                    exif = Image.Exif()
+                    options = {}
+                    if source == "flat":
+                        exif[tag.DateTimeOriginal] = "2025:02:10 11:30:00"
+                    elif source == "digitized":
+                        exif.get_ifd(ExifTags.IFD.Exif)[tag.DateTimeDigitized] = "2025:02:10 11:30:00"
+                    elif source == "xmp":
+                        exif.get_ifd(ExifTags.IFD.Exif)[tag.DateTimeOriginal] = "0000:00:00 00:00:00"
+                        exif[tag.DateTime] = "2025:03:15 11:00:00"
+                        options["xmp"] = packet
+                    elif source == "malformed":
+                        options["xmp"] = b"<invalid"
+                    buf = BytesIO()
+                    Image.new("RGB", (32, 32)).save(buf, fmt, exif=exif, **options)
+                    upload = SimpleUploadedFile(f"camera.{ext}", buf.getvalue(), content_type=f"image/{ext}")
+                    response = self.member.post("/api/places/tokyo/photos/",
+                                                {"image": upload, "taken_on": "2025-07-01"}, format="multipart")
+                    self.assertEqual(response.status_code, 201)
+                    expected = "2025-07-01" if source in ("malformed", "missing") else "2025-02-10"
+                    self.assertEqual(response.json()["taken_on"], expected)
+
     def test_upload_without_exif_uses_the_date_from_the_form(self):
         body = {"image": _jpeg_upload(size=(40, 30)), "taken_on": "2026-11-04"}
         data = self.member.post("/api/places/tokyo/photos/", body, format="multipart").json()
