@@ -24,6 +24,9 @@ export const ACTIVITIES = [
       { cover: 'film-good-doctor-s1', title: '良醫墨菲 第一季', sub: 'The Good Doctor · Season 1' },
       { cover: 'film-good-doctor-s2', title: '良醫墨菲 第二季', sub: 'The Good Doctor · Season 2' },
       { cover: 'film-cyberpunk-edgerunners', title: 'Cyberpunk：邊緣行者', sub: 'Cyberpunk: Edgerunners' },
+      { cover: 'film-minions-monsters', title: '小黃人與大怪獸', sub: 'Minions & Monsters' },
+      { cover: 'film-minions-rise-of-gru', title: '小黃人神偷奶爸前傳', sub: 'Minions: The Rise of Gru' },
+      { cover: 'film-spider-man-brand-new-day', title: '蜘蛛俠4', sub: 'Spider-Man: Brand New Day' },
     ],
   },
   {

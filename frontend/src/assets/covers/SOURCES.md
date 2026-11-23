@@ -11,6 +11,9 @@
 | film-good-doctor-s1.jpg | https://static.tvmaze.com/uploads/images/original_untouched/168/422295.jpg |
 | film-good-doctor-s2.jpg | https://static.tvmaze.com/uploads/images/original_untouched/168/422294.jpg |
 | film-cyberpunk-edgerunners.jpg | https://static.tvmaze.com/uploads/images/original_untouched/498/1246519.jpg |
+| film-minions-monsters.jpg | https://upload.wikimedia.org/wikipedia/en/9/9d/Minions_%26_Monsters_poster.jpg |
+| film-minions-rise-of-gru.jpg | https://upload.wikimedia.org/wikipedia/en/4/45/Minions_The_Rise_of_Gru_poster.jpg |
+| film-spider-man-brand-new-day.jpg | https://upload.wikimedia.org/wikipedia/en/9/9a/Spider-Man_Brand_New_Day_poster.jpg |
 | lego-72153.jpg | https://images.brickset.com/sets/images/72153-1.jpg |
 | lego-40892.jpg | https://images.brickset.com/sets/images/40892-1.jpg |
 | lego-40906.jpg | https://images.brickset.com/sets/images/40906-1.jpg |
