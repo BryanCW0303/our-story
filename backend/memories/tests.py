@@ -86,6 +86,9 @@ class ApiTests(TestCase):
         self.assertEqual(places["hongkong"]["trip_months"], ["2025-12", "2026-05", "2026-08"])
         self.assertEqual(places["macau"]["trip_months"], [])
         self.assertEqual(places["tokyo"]["trip_months"], [])
+        self.assertEqual(places["tokyo"]["photo_months"], ["2026-06"])
+        self.assertEqual(places["macau"]["photo_months"], [])
+        self.assertEqual(places["hongkong"]["photo_months"], places["hongkong"]["trip_months"])
 
     def test_photos_are_listed_oldest_first(self):
         self._photo(date(2026, 3, 29))

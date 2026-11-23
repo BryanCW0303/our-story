@@ -80,13 +80,13 @@ class PlaceListView(generics.ListAPIView):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        trip_months = defaultdict(list)
-        months = (Photo.objects.filter(place__kind=Place.Kind.TRIP)
+        photo_months = defaultdict(list)
+        months = (Photo.objects
                   .annotate(month=TruncMonth("taken_on"))
                   .values_list("place_id", "month").order_by("place_id", "month").distinct())
         for place_id, month in months:
-            trip_months[place_id].append(month.strftime("%Y-%m"))
-        context["trip_months"] = trip_months
+            photo_months[place_id].append(month.strftime("%Y-%m"))
+        context["photo_months"] = photo_months
         return context
 
     def get_queryset(self):

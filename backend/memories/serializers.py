@@ -22,15 +22,19 @@ class PlaceSerializer(serializers.ModelSerializer):
     restaurant_count = serializers.IntegerField(read_only=True)
     first_photo = serializers.DateField(read_only=True)
     last_photo = serializers.DateField(read_only=True)
+    photo_months = serializers.SerializerMethodField()
     trip_months = serializers.SerializerMethodField()
 
     def get_trip_months(self, place):
-        return self.context["trip_months"].get(place.pk, [])
+        return self.get_photo_months(place) if place.kind == Place.Kind.TRIP else []
+
+    def get_photo_months(self, place):
+        return self.context["photo_months"].get(place.pk, [])
 
 
     class Meta:
         model = Place
-        fields = ["slug", "name", "name_en", "kind", "color", "photo_count", "restaurant_count", "first_photo", "last_photo", "trip_months"]
+        fields = ["slug", "name", "name_en", "kind", "color", "photo_count", "restaurant_count", "first_photo", "last_photo", "trip_months", "photo_months"]
 
 
 class PhotoSerializer(serializers.ModelSerializer):

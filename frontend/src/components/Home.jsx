@@ -1,5 +1,6 @@
 import { ACTIVITIES } from '../activities.js'
 import { parseDate } from '../api.js'
+import FootprintTimeline from './FootprintTimeline.jsx'
 import Icon from './Icon.jsx'
 import { Badge } from './Landmark.jsx'
 
@@ -34,21 +35,7 @@ function placeSpan(place) {
   return from === to ? from : `${from} – ${to}`
 }
 
-/**
- * How many places, photos, restaurants and activities so far, and the places as a route in the order they were first visited.
- * "First visited" is the date of a place's earliest photo. A city listed under both kinds
- * (Vancouver) is one place and one stop here, dated by the earliest photo of either.
- */
 function Footprints({ places }) {
-  const cities = new Map()
-  for (const place of places) {
-    const seen = cities.get(place.name)
-    if (!seen) cities.set(place.name, { place, first: place.first_photo })
-    else if (place.first_photo && (!seen.first || place.first_photo < seen.first)) seen.first = place.first_photo
-  }
-  // ISO dates sort as text; '9' puts the places without photos last.
-  const stops = [...cities.values()].sort((a, b) => (a.first ?? '9').localeCompare(b.first ?? '9'))
-  const visited = stops.filter((stop) => stop.first)
   const withPhotos = places.filter((place) => place.photo_count > 0)
   const total = places.reduce((sum, place) => sum + place.photo_count, 0)
 
@@ -62,7 +49,7 @@ function Footprints({ places }) {
       <section className="trail-card">
         <div className="stats">
           <div className="stat">
-            <strong>{visited.length}</strong>
+            <strong>{new Set(withPhotos.map((place) => place.name)).size}</strong>
             <span>個地方</span>
           </div>
           <Icon name="heart" />
@@ -97,15 +84,7 @@ function Footprints({ places }) {
             </span>
           ))}
         </p>
-        <div className="path">
-          {stops.map(({ place, first }) => (
-            <a className={first ? 'stop' : 'stop unvisited'} href={`#/p/${place.slug}`} key={place.slug}>
-              <Badge place={place} />
-              <b>{place.name}</b>
-              <small>{first ? yearMonth(first) : '還沒去'}</small>
-            </a>
-          ))}
-        </div>
+        <FootprintTimeline places={places} />
       </section>
     </>
   )
