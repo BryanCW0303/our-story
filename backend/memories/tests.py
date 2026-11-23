@@ -77,6 +77,16 @@ class ApiTests(TestCase):
 
         self.assertEqual(tokyo(self.member), ("2025-12-01", "2026-04-01"))
 
+    def test_trips_list_only_distinct_photographed_months(self):
+        trip = Place.objects.get(slug="hongkong")
+        for day in (date(2026, 8, 5), date(2025, 12, 1), date(2026, 5, 3), date(2026, 5, 21)):
+            Photo.from_upload(trip, _jpeg_upload(size=(40, 30)), fallback_date=day)
+        self._photo(date(2026, 6, 1))
+        places = {p["slug"]: p for p in self.member.get("/api/places/").json()}
+        self.assertEqual(places["hongkong"]["trip_months"], ["2025-12", "2026-05", "2026-08"])
+        self.assertEqual(places["macau"]["trip_months"], [])
+        self.assertEqual(places["tokyo"]["trip_months"], [])
+
     def test_photos_are_listed_oldest_first(self):
         self._photo(date(2026, 3, 29))
         self._photo(date(2025, 12, 1))

@@ -22,11 +22,12 @@ function daysTogether(startDate) {
 const yearMonth = (date) => date.slice(0, 7).replace('-', '.')
 
 /**
- * What a place's card says under its name: the months of its earliest and latest photo.
+ * Trips list the individual months visited; homes show the span of residence.
  * A current home has no end yet, so it runs to "now".
  */
 function placeSpan(place) {
   if (!place.first_photo) return '還沒有照片'
+  if (place.kind === 'trip') return place.trip_months.map(yearMonth).join('、')
   const from = yearMonth(place.first_photo)
   if (place.kind === 'now') return `${from} – now`
   const to = yearMonth(place.last_photo)

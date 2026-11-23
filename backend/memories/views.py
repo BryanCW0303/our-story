@@ -1,6 +1,9 @@
+from collections import defaultdict
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Count, Max, Min, Q
+from django.db.models.functions import TruncMonth
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -74,6 +77,17 @@ class SiteConfigView(generics.RetrieveUpdateAPIView):
 
 class PlaceListView(generics.ListAPIView):
     serializer_class = PlaceSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        trip_months = defaultdict(list)
+        months = (Photo.objects.filter(place__kind=Place.Kind.TRIP)
+                  .annotate(month=TruncMonth("taken_on"))
+                  .values_list("place_id", "month").order_by("place_id", "month").distinct())
+        for place_id, month in months:
+            trip_months[place_id].append(month.strftime("%Y-%m"))
+        context["trip_months"] = trip_months
+        return context
 
     def get_queryset(self):
         # Explicit order_by: Django drops Meta.ordering once a query is grouped.
