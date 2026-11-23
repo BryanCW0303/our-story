@@ -111,7 +111,6 @@ class PlacePhotosView(generics.ListAPIView):
                 upload,
                 fallback_date=fields.validated_data.get("taken_on") or timezone.localdate(),
                 note=fields.validated_data.get("note", ""),
-                is_public=str(request.data.get("is_public", "true")).lower() not in ("false", "0", ""),
                 user=request.user,
             )
         except ValueError:

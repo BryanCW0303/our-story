@@ -81,14 +81,6 @@ function Note({ photo, authed, onChanged, onDeleted, onBusy }) {
               required
             />
           </label>
-          <label className="check">
-            <input
-              type="checkbox"
-              checked={draft.is_public}
-              onChange={(e) => setDraft({ ...draft, is_public: e.target.checked })}
-            />
-            <span>公開給所有訪客</span>
-          </label>
         </div>
       )}
 
@@ -113,7 +105,7 @@ function Note({ photo, authed, onChanged, onDeleted, onBusy }) {
             <>
               <button
                 className="btn primary"
-                onClick={() => setDraft({ note: photo.note, taken_on: photo.taken_on, is_public: photo.is_public })}
+                onClick={() => setDraft({ note: photo.note, taken_on: photo.taken_on })}
               >
                 <Icon name="pencil" /> {photo.note ? '編輯留言' : '寫留言'}
               </button>
@@ -197,11 +189,6 @@ export default function PhotoPage({ place, photos, index, authed, onStep, onChan
             <span className="where">
               <Icon name="pin" /> {place.name}
             </span>
-            {!photo.is_public && (
-              <span className="where">
-                <Icon name="lock" /> 僅登入可見
-              </span>
-            )}
           </div>
           <Note
             key={photo.id}

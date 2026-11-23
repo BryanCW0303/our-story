@@ -59,7 +59,6 @@ function Timeline({ place, photos, authed, focusId }) {
               >
                 <img src={photo.thumb} alt="" loading="lazy" />
                 <span className="cap">
-                  {!photo.is_public && <Icon name="lock" />}
                   {photo.note || <span className="none">還沒有留言</span>}
                 </span>
               </a>

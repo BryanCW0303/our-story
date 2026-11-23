@@ -8,7 +8,6 @@ export default function UploadForm({ place, onClose, onUploaded }) {
   const [files, setFiles] = useState([])
   const [date, setDate] = useState(todayString())
   const [note, setNote] = useState('')
-  const [isPublic, setIsPublic] = useState(true)
   const [busy, setBusy] = useState(false)
   const [progress, setProgress] = useState('')
   const [error, setError] = useState('')
@@ -30,7 +29,6 @@ export default function UploadForm({ place, onClose, onUploaded }) {
       body.append('image', queue[i])
       body.append('taken_on', date)
       body.append('note', note)
-      body.append('is_public', isPublic ? 'true' : 'false')
       try {
         onUploaded(await api(`places/${place.slug}/photos/`, { method: 'POST', form: body }))
       } catch (err) {
@@ -72,13 +70,6 @@ export default function UploadForm({ place, onClose, onUploaded }) {
             placeholder="寫下關於這張照片的話…"
           />
           {files.length > 1 && note && <small>這段話會寫在這次上傳的每一張照片上。</small>}
-        </label>
-        <label className="check">
-          <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
-          <span>
-            公開給所有訪客
-            <small>取消勾選後，只有登入的人看得到</small>
-          </span>
         </label>
 
         {error && (

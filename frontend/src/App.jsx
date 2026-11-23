@@ -186,7 +186,7 @@ export default function App({ onLoggedOut }) {
   } else if (!photos) {
     page = <p className="muted center pad">載入中…</p>
   } else if (index < 0) {
-    page = <Missing text="找不到這張照片，可能已經刪除，或是需要登入才看得到。" href={`#/p/${slug}`} label={`回到${place.name}`} />
+    page = <Missing text="找不到這張照片，可能已經刪除。" href={`#/p/${slug}`} label={`回到${place.name}`} />
   } else {
     page = (
       <PhotoPage

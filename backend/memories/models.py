@@ -88,7 +88,6 @@ class Photo(models.Model):
     note_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )
-    is_public = models.BooleanField("公開", default=True, help_text="取消勾選後只有登入的人看得到")
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )
@@ -102,7 +101,7 @@ class Photo(models.Model):
         return f"{self.place} {self.taken_on}"
 
     @classmethod
-    def from_upload(cls, place, upload, *, fallback_date, note="", is_public=True, user=None):
+    def from_upload(cls, place, upload, *, fallback_date, note="", user=None):
         """Normalise an uploaded file into a web-friendly JPEG plus a thumbnail.
 
         The date comes from the photo's own EXIF data when it has any; `fallback_date`
@@ -123,7 +122,6 @@ class Photo(models.Model):
             taken_on=taken_on,
             note=note,
             note_by=user if note else None,
-            is_public=is_public,
             uploaded_by=user,
         )
         photo.image.save(f"{stem}.jpg", display, save=False)

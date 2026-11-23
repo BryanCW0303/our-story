@@ -12,8 +12,8 @@ class PlaceAdmin(admin.ModelAdmin):
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ["taken_on", "place", "note", "is_public", "uploaded_by"]
-    list_filter = ["place", "is_public"]
+    list_display = ["taken_on", "place", "note", "uploaded_by"]
+    list_filter = ["place"]
     search_fields = ["note"]
     date_hierarchy = "taken_on"
     # Files are produced by the upload code; the admin only edits the text around them.

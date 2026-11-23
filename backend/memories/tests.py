@@ -69,7 +69,7 @@ class ApiTests(TestCase):
     def test_place_dates_span_its_visible_photos(self):
         self._photo(date(2026, 3, 28))
         self._photo(date(2026, 4, 1))
-        self._photo(date(2025, 12, 1), is_public=False)
+        self._photo(date(2025, 12, 1))
 
         def tokyo(client):
             place = next(p for p in client.get("/api/places/").json() if p["slug"] == "tokyo")
@@ -117,19 +117,16 @@ class ApiTests(TestCase):
         self.assertEqual(data["taken_on"], "2026-11-04")
         self.assertEqual((data["note"], data["note_by"]), ("", ""))
 
-    def test_private_photo_files_are_hidden_from_visitors(self):
-        body = {"image": _jpeg_upload(size=(40, 30)), "is_public": "false"}
+    def test_photo_files_require_login(self):
+        body = {"image": _jpeg_upload(size=(40, 30)), "is_public": "true"}
         data = self.member.post("/api/places/tokyo/photos/", body, format="multipart").json()
-        self.assertFalse(data["is_public"])
+        self.assertNotIn("is_public", data)
         self.assertEqual(self.anon.get(data["image"]).status_code, 404)
         self.assertEqual(self.anon.get(data["thumb"]).status_code, 404)
         session_client = APIClient()
         session_client.force_login(self.user)
         self.assertEqual(session_client.get(data["thumb"]).status_code, 200)
 
-        # Legacy public photos also require a session.
-        self.assertEqual(self.member.patch(f"/api/photos/{data['id']}/", {"is_public": True}).status_code, 200)
-        self.assertEqual(self.anon.get(data["image"]).status_code, 404)
         self.assertEqual(session_client.get(data["image"]).status_code, 200)
 
     def test_non_image_upload_is_rejected(self):

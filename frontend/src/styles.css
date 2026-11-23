@@ -1063,8 +1063,7 @@ section + .divider {
   border-color: var(--accent);
 }
 
-.form small,
-.check small {
+.form small {
   display: block;
   margin-top: 6px;
   font-size: 12.5px;
@@ -1096,21 +1095,6 @@ section + .divider {
 .progress {
   margin-right: auto;
   font-size: 14px;
-}
-
-.form .check,
-.edit-fields .check {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  color: var(--ink);
-}
-
-.check input {
-  width: 18px;
-  height: 18px;
-  margin: 2px 0 0;
-  accent-color: var(--accent);
 }
 
 .drop {
