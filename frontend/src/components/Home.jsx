@@ -15,8 +15,8 @@ export const KINDS = [
 function daysTogether(startDate) {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  // Rounding absorbs daylight-saving shifts; the first day counts as day 1.
-  return Math.round((today - parseDate(startDate)) / DAY_MS) + 1
+  // Round across daylight-saving shifts so local calendar days stay whole.
+  return Math.max(0, Math.round((today - parseDate(startDate)) / DAY_MS))
 }
 
 const yearMonth = (date) => date.slice(0, 7).replace('-', '.')
@@ -129,9 +129,9 @@ export default function Home({ config, places, authed, onOpenSettings }) {
             config?.title
           )}
         </h1>
-        {days > 0 && (
+        {config?.start_date && (
           <p className="days">
-            在一起的第<strong>{days.toLocaleString()}</strong>天
+            我們已經在一起 <strong>{days.toLocaleString()}</strong> 天
           </p>
         )}
         {authed && config && !(hasNames && config.start_date) && (

@@ -233,6 +233,11 @@ export default function App() {
           {config?.title ?? ''}
         </a>
         <nav>
+          {authed && config && (
+            <button className="pill" onClick={() => setModal('settings')}>
+              設定
+            </button>
+          )}
           {authed ? (
             <button className="pill" onClick={logout}>
               登出
