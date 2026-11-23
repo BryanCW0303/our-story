@@ -4,11 +4,11 @@ import { createRoot } from 'react-dom/client'
 import '@fontsource/noto-serif-tc/500.css'
 import '@fontsource/noto-serif-tc/700.css'
 import '@fontsource/lxgw-wenkai-tc/400.css'
-import App from './App.jsx'
+import SessionGate from './SessionGate.jsx'
 import './styles.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <SessionGate />
   </StrictMode>,
 )

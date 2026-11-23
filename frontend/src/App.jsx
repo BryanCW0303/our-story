@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ACTIVITIES } from './activities.js'
-import { api, REFUSED } from './api.js'
+import { api } from './api.js'
 import ActivityPage from './components/ActivityPage.jsx'
 import Home from './components/Home.jsx'
 import Icon from './components/Icon.jsx'
-import LoginForm from './components/LoginForm.jsx'
 import PhotoPage from './components/PhotoPage.jsx'
 import PlacePage from './components/PlacePage.jsx'
 import RestaurantForm from './components/RestaurantForm.jsx'
@@ -34,19 +33,17 @@ function readRoute() {
 
 const oldestFirst = (a, b) => a.taken_on.localeCompare(b.taken_on) || a.id - b.id
 
-export default function App() {
+export default function App({ onLoggedOut }) {
   const [route, setRoute] = useState(readRoute)
-  const [session, setSession] = useState(null)
   const [config, setConfig] = useState(null)
   const [places, setPlaces] = useState(null)
   const [album, setAlbum] = useState({ slug: null, photos: null }) // the photos of the place being viewed
   const [menu, setMenu] = useState({ slug: null, restaurants: null }) // and its favourite restaurants
   const [error, setError] = useState('')
-  const [modal, setModal] = useState(null) // 'login' | 'settings' | 'upload' | 'restaurant'
+  const [modal, setModal] = useState(null) // 'settings' | 'upload' | 'restaurant'
   const current = useRef(route) // the route as of the last navigation, for the listeners below
   const lastPhoto = useRef(null) // the photo just left, so its place's timeline can scroll back to it
 
-  const authed = Boolean(session?.authenticated)
   const place = places?.find((p) => p.slug === route.slug) ?? null
   const photos = album.slug === route.slug ? album.photos : null
   const index = photos && route.photoId ? photos.findIndex((p) => p.id === route.photoId) : -1
@@ -76,10 +73,6 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    // The session call also hands the browser its CSRF cookie.
-    api('session/')
-      .then(setSession)
-      .catch((err) => setError(err.message))
     api('config/')
       .then(setConfig)
       .catch(() => {})
@@ -90,20 +83,6 @@ export default function App() {
     if (config?.title) document.title = config.title
   }, [config])
 
-  // A refused request means the page's idea of who is signed in is out of date (the session ran out,
-  // or was ended elsewhere): ask again, so the login button comes back instead of every save failing.
-  useEffect(() => {
-    const refresh = () => {
-      api('session/')
-        .then(setSession)
-        .catch(() => {})
-      loadPlaces()
-    }
-    window.addEventListener(REFUSED, refresh)
-    return () => window.removeEventListener(REFUSED, refresh)
-  }, [loadPlaces])
-
-  // Load the place's photos; again after logging in or out, since that changes what is visible.
   const slug = place?.slug ?? null
   useEffect(() => {
     if (!slug) return
@@ -115,7 +94,7 @@ export default function App() {
     return () => {
       stale = true
     }
-  }, [slug, authed])
+  }, [slug])
 
   // Restaurants are the same for everyone, so they only reload when the place changes.
   useEffect(() => {
@@ -154,8 +133,8 @@ export default function App() {
 
   async function logout() {
     try {
-      setSession(await api('logout/', { method: 'POST' }))
-      loadPlaces()
+      await api('logout/', { method: 'POST' })
+      onLoggedOut()
     } catch (err) {
       setError(err.message)
     }
@@ -166,7 +145,7 @@ export default function App() {
   if (route.activity) {
     page = activity ? <ActivityPage activity={activity} /> : <Missing text="找不到這一頁。" href="#/" label="回到首頁" />
   } else if (!route.slug) {
-    page = <Home config={config} places={places} authed={authed} onOpenSettings={() => setModal('settings')} />
+    page = <Home config={config} places={places} authed onOpenSettings={() => setModal('settings')} />
   } else if (!places) {
     page = <p className="muted center pad">載入中…</p>
   } else if (!place) {
@@ -182,7 +161,7 @@ export default function App() {
           key={restaurant.id}
           place={place}
           restaurant={restaurant}
-          authed={authed}
+          authed
           onChanged={(saved) => updateRestaurants((list) => list.map((r) => (r.id === saved.id ? saved : r)))}
           onDeleted={(gone) => {
             updateRestaurants((list) => list.filter((r) => r.id !== gone.id))
@@ -198,7 +177,7 @@ export default function App() {
         tab={route.tab}
         photos={photos}
         restaurants={restaurants}
-        authed={authed}
+        authed
         focusId={lastPhoto.current}
         onUpload={() => setModal('upload')}
         onAddRestaurant={() => setModal('restaurant')}
@@ -214,7 +193,7 @@ export default function App() {
         place={place}
         photos={photos}
         index={index}
-        authed={authed}
+        authed
         onStep={step}
         onChanged={(saved) => updatePhotos((list) => list.map((p) => (p.id === saved.id ? saved : p)))}
         onDeleted={(gone) => {
@@ -233,22 +212,12 @@ export default function App() {
           {config?.title ?? ''}
         </a>
         <nav>
-          {authed && config && (
+          {config && (
             <button className="pill" onClick={() => setModal('settings')}>
               設定
             </button>
           )}
-          {authed ? (
-            <button className="pill" onClick={logout}>
-              登出
-            </button>
-          ) : (
-            session && (
-              <button className="pill" onClick={() => setModal('login')}>
-                登入
-              </button>
-            )
-          )}
+          <button className="pill" onClick={logout}>登出</button>
         </nav>
       </header>
 
@@ -262,16 +231,6 @@ export default function App() {
         {page}
       </main>
 
-      {modal === 'login' && (
-        <LoginForm
-          onClose={() => setModal(null)}
-          onLoggedIn={(next) => {
-            setSession(next)
-            setModal(null)
-            loadPlaces()
-          }}
-        />
-      )}
       {modal === 'settings' && config && (
         <SettingsForm
           config={config}

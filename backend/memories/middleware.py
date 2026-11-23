@@ -31,3 +31,17 @@ def admin_login_throttle(get_response):
         return get_response(request)
 
     return middleware
+
+
+def member_content(get_response):
+    """Keep member bundles, API responses and uploads out of shared caches."""
+    def middleware(request):
+        if request.path.startswith("/members/") and not request.user.is_authenticated:
+            response = HttpResponse(status=404)
+        else:
+            response = get_response(request)
+        if request.path.startswith(("/members/", "/api/", "/media/")):
+            response["Cache-Control"] = "private, no-store"
+        return response
+
+    return middleware

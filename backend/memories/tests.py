@@ -47,7 +47,7 @@ class ApiTests(TestCase):
         return Photo.from_upload(self.tokyo, _jpeg_upload(size=(400, 300)), fallback_date=taken_on, **extra)
 
     def test_places_are_seeded_by_kind_in_order(self):
-        places = self.anon.get("/api/places/").json()
+        places = self.member.get("/api/places/").json()
         self.assertEqual(
             [(p["kind"], p["slug"]) for p in places],
             [
@@ -76,28 +76,21 @@ class ApiTests(TestCase):
             return place["first_photo"], place["last_photo"]
 
         self.assertEqual(tokyo(self.member), ("2025-12-01", "2026-04-01"))
-        self.assertEqual(tokyo(self.anon), ("2026-03-28", "2026-04-01"))  # the private one stays hidden
 
     def test_photos_are_listed_oldest_first(self):
         self._photo(date(2026, 3, 29))
         self._photo(date(2025, 12, 1))
         self._photo(date(2026, 3, 28))
-        days = [p["taken_on"] for p in self.anon.get("/api/places/tokyo/photos/").json()]
+        days = [p["taken_on"] for p in self.member.get("/api/places/tokyo/photos/").json()]
         self.assertEqual(days, ["2025-12-01", "2026-03-28", "2026-03-29"])
-        self.assertEqual(self.anon.get("/api/places/atlantis/photos/").status_code, 404)
+        self.assertEqual(self.member.get("/api/places/atlantis/photos/").status_code, 404)
 
-    def test_visitors_only_see_and_count_public_photos(self):
-        self._photo(date(2026, 1, 1))
-        hidden = self._photo(date(2026, 1, 2), is_public=False)
-
-        def tokyo_count(client):
-            return next(p["photo_count"] for p in client.get("/api/places/").json() if p["slug"] == "tokyo")
-
-        self.assertEqual(tokyo_count(self.anon), 1)
-        self.assertEqual(tokyo_count(self.member), 2)
-        self.assertEqual(len(self.anon.get("/api/places/tokyo/photos/").json()), 1)
-        self.assertEqual(len(self.member.get("/api/places/tokyo/photos/").json()), 2)
-        self.assertEqual(self.anon.get(f"/api/photos/{hidden.id}/").status_code, 404)
+    def test_visitors_cannot_read_member_content(self):
+        for path in ("/api/config/", "/api/places/", "/api/places/tokyo/photos/",
+                     "/api/photos/1/", "/api/places/tokyo/restaurants/", "/api/restaurants/1/"):
+            with self.subTest(path=path):
+                self.assertEqual(self.anon.get(path).status_code, 403)
+        self.assertEqual(self.anon.get("/members/App.js").status_code, 404)
 
     def test_visitors_cannot_write(self):
         photo = self._photo(date(2026, 1, 1))
@@ -134,9 +127,10 @@ class ApiTests(TestCase):
         session_client.force_login(self.user)
         self.assertEqual(session_client.get(data["thumb"]).status_code, 200)
 
-        # Once it is made public, anyone can load it.
+        # Legacy public photos also require a session.
         self.assertEqual(self.member.patch(f"/api/photos/{data['id']}/", {"is_public": True}).status_code, 200)
-        self.assertEqual(self.anon.get(data["image"]).status_code, 200)
+        self.assertEqual(self.anon.get(data["image"]).status_code, 404)
+        self.assertEqual(session_client.get(data["image"]).status_code, 200)
 
     def test_non_image_upload_is_rejected(self):
         fake = SimpleUploadedFile("a.jpg", b"not really a photo", content_type="image/jpeg")
@@ -181,14 +175,14 @@ class ApiTests(TestCase):
         self.assertEqual((data["cuisine"], data["note_by"]), ("", "tester"))
         self.assertEqual(Image.open(Restaurant.objects.get(id=data["id"]).image.path).size, (1600, 1200))
 
-        # Visitors can read the list and the covers, and the counts are not multiplied by the photos.
+        # Members can read the list, and the counts are not multiplied by the photos.
         self._photo(date(2026, 1, 1))
         self._photo(date(2026, 1, 2))
         self._photo(date(2026, 1, 3))
-        names = [r["name"] for r in self.anon.get("/api/places/tokyo/restaurants/").json()]
+        names = [r["name"] for r in self.member.get("/api/places/tokyo/restaurants/").json()]
         self.assertEqual(names, ["巷口拉麵", "海邊小館"])
-        self.assertEqual(self.anon.get(data["thumb"]).status_code, 200)
-        tokyo = next(p for p in self.anon.get("/api/places/").json() if p["slug"] == "tokyo")
+        self.assertEqual(self.anon.get(data["thumb"]).status_code, 404)
+        tokyo = next(p for p in self.member.get("/api/places/").json() if p["slug"] == "tokyo")
         self.assertEqual((tokyo["photo_count"], tokyo["restaurant_count"]), (3, 2))
 
     def test_restaurant_needs_a_name_and_a_real_picture(self):
@@ -239,9 +233,12 @@ class ApiTests(TestCase):
         good = client.post("/api/login/", creds, format="json", HTTP_X_CSRFTOKEN=token)
         self.assertEqual(good.json(), {"authenticated": True, "username": "tester"})
 
+        self.assertEqual(client.get("/api/config/").status_code, 200)
         token = client.cookies["csrftoken"].value  # rotated on login
         self.assertEqual(client.post("/api/logout/", HTTP_X_CSRFTOKEN=token).status_code, 200)
         self.assertFalse(client.get("/api/session/").json()["authenticated"])
+
+        self.assertEqual(client.get("/api/config/").status_code, 403)
 
     def test_admin_login_attempts_are_limited(self):
         guess = {"username": "tester", "password": "wrong"}
@@ -254,9 +251,9 @@ class ApiTests(TestCase):
         right = {"username": "tester", "password": "a-long-test-passphrase"}
         self.assertEqual(self.anon.post("/admin/login/", right).status_code, 429)
         self.assertEqual(self.anon.post("/api/login/", right, format="json").status_code, 429)
-        # Only password attempts are limited: the page itself and the rest of the site still load.
+        # Only password attempts are limited: the login page and session check still work.
         self.assertEqual(self.anon.get("/admin/login/").status_code, 200)
-        self.assertEqual(self.anon.get("/api/places/").status_code, 200)
+        self.assertEqual(self.anon.get("/api/session/").status_code, 200)
 
     def test_admin_login_still_works_within_the_limit(self):
         get_user_model().objects.create_superuser("boss", password="yet-another-long-passphrase")

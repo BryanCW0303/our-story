@@ -72,25 +72,17 @@ class SiteConfigView(generics.RetrieveUpdateAPIView):
         return SiteConfig.load()
 
 
-def _visible_photos(request):
-    """Visitors only ever see public photos; logged-in members see all of them."""
-    photos = Photo.objects.select_related("note_by")
-    return photos if request.user.is_authenticated else photos.filter(is_public=True)
-
-
 class PlaceListView(generics.ListAPIView):
     serializer_class = PlaceSerializer
 
     def get_queryset(self):
-        # The count and dates must not reveal anything about a place's private photos.
-        visible = None if self.request.user.is_authenticated else Q(photos__is_public=True)
         # Explicit order_by: Django drops Meta.ordering once a query is grouped.
         # distinct: joining both photos and restaurants would otherwise multiply each count by the other.
         return Place.objects.annotate(
-            photo_count=Count("photos", filter=visible, distinct=True),
+            photo_count=Count("photos", distinct=True),
             restaurant_count=Count("restaurants", distinct=True),
-            first_photo=Min("photos__taken_on", filter=visible),
-            last_photo=Max("photos__taken_on", filter=visible),
+            first_photo=Min("photos__taken_on"),
+            last_photo=Max("photos__taken_on"),
         ).order_by("order", "id")
 
 
@@ -102,7 +94,7 @@ class PlacePhotosView(generics.ListAPIView):
 
     def get_queryset(self):
         place = get_object_or_404(Place, slug=self.kwargs["slug"])
-        return _visible_photos(self.request).filter(place=place)
+        return Photo.objects.select_related("note_by").filter(place=place)
 
     def post(self, request, slug):
         place = get_object_or_404(Place, slug=slug)
@@ -134,7 +126,7 @@ class PhotoDetailView(generics.RetrieveUpdateDestroyAPIView):
     http_method_names = ["get", "patch", "delete", "head", "options"]
 
     def get_queryset(self):
-        return _visible_photos(self.request)
+        return Photo.objects.select_related("note_by")
 
     def perform_update(self, serializer):
         note = serializer.validated_data.get("note")
@@ -197,19 +189,17 @@ class RestaurantDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 def media(request, path):
-    """Serve an uploaded picture, hiding private photos from visitors. Restaurant covers are public."""
+    """Serve uploaded photos and restaurant covers to signed-in members."""
+    if not request.user.is_authenticated:
+        raise Http404
     photo = Photo.objects.filter(Q(image=path) | Q(thumb=path)).first()
     if photo is None:
         photo = Restaurant.objects.filter(Q(image=path) | Q(thumb=path)).first()
         if photo is None:
             raise Http404
-    elif not (photo.is_public or request.user.is_authenticated):
-        raise Http404
     field = photo.image if photo.image.name == path else photo.thumb
     try:
         response = FileResponse(field.open("rb"), content_type="image/jpeg")
     except FileNotFoundError as exc:
         raise Http404 from exc
-    # File names are random and never reused, so the browser may keep its copy.
-    response["Cache-Control"] = "private, max-age=604800"
     return response
