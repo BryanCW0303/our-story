@@ -37,7 +37,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = ["id", "image", "thumb", "width", "height", "taken_on", "note", "note_by"]
+        fields = ["id", "image", "thumb", "width", "height", "taken_on", "taken_time", "note", "note_by"]
         read_only_fields = ["width", "height"]
 
     def get_image(self, photo):

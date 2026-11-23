@@ -102,7 +102,7 @@ class PlacePhotosView(generics.ListAPIView):
         if upload is None:
             return Response({"detail": "沒有收到照片"}, status=status.HTTP_400_BAD_REQUEST)
         if upload.size > settings.MAX_PHOTO_BYTES:
-            return Response({"detail": "照片太大了"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "每張照片最多 80 MiB"}, status=status.HTTP_400_BAD_REQUEST)
         fields = UploadSerializer(data=request.data)
         fields.is_valid(raise_exception=True)
         try:
@@ -141,7 +141,7 @@ def _set_cover(request, restaurant):
     upload = request.FILES.get("image")
     if upload is None:
         return
-    if upload.size > settings.MAX_PHOTO_BYTES:
+    if upload.size > settings.MAX_COVER_BYTES:
         raise serializers.ValidationError({"image": ["照片太大了"]})
     try:
         restaurant.set_cover(upload)

@@ -3,6 +3,10 @@ import { api, NOTE_MAX, todayString } from '../api.js'
 import Icon from './Icon.jsx'
 import Modal from './Modal.jsx'
 
+const MIB = 1024 * 1024
+const MAX_PHOTO_BYTES = 80 * MIB
+const sizeLabel = (bytes) => (bytes / MIB).toLocaleString('zh-Hant', { maximumFractionDigits: 2 }) + ' MiB'
+
 /** Upload photos to one place. They go up one at a time so each request stays small. */
 export default function UploadForm({ place, onClose, onUploaded }) {
   const [files, setFiles] = useState([])
@@ -12,14 +16,19 @@ export default function UploadForm({ place, onClose, onUploaded }) {
   const [progress, setProgress] = useState('')
   const [error, setError] = useState('')
 
+  const oversized = files.filter((file) => file.size > MAX_PHOTO_BYTES)
+  const totalBytes = files.reduce((sum, file) => sum + file.size, 0)
+
   function pick(event) {
     setFiles(Array.from(event.target.files ?? []))
+    event.target.value = ''
     setError('')
   }
 
   async function submit(event) {
     event.preventDefault()
     if (!files.length) return setError('先選一張照片')
+    if (oversized.length) return
     setBusy(true)
     setError('')
     const queue = [...files]
@@ -50,9 +59,19 @@ export default function UploadForm({ place, onClose, onUploaded }) {
           <span className="field-label">照片</span>
           <label className="drop">
             <Icon name="upload" />
-            <span>{files.length ? `已選 ${files.length} 張照片` : '點這裡選照片，可以一次選多張'}</span>
+            <span>{files.length ? `已選 ${files.length} 張，共 ${sizeLabel(totalBytes)}` : '點這裡選照片，可以一次選多張'}</span>
             <input type="file" accept="image/*" multiple hidden onChange={pick} disabled={busy} />
           </label>
+          <small>可選多張，單張最多 80 MiB。</small>
+          {oversized.length > 0 && (
+            <div className="notice error" role="alert">
+              以下 {oversized.length} 張超過上限：
+              <ul>{oversized.map((file, i) => <li key={i}>{file.name}（{sizeLabel(file.size)}）</li>)}</ul>
+              <button type="button" className="btn ghost" onClick={() => setFiles(files.filter((file) => file.size <= MAX_PHOTO_BYTES))}>
+                移除超限照片
+              </button>
+            </div>
+          )}
         </div>
         <label>
           拍攝日期
@@ -82,7 +101,7 @@ export default function UploadForm({ place, onClose, onUploaded }) {
           <button type="button" className="btn ghost" onClick={onClose} disabled={busy}>
             取消
           </button>
-          <button className="btn primary" disabled={busy}>
+          <button className="btn primary" disabled={busy || !files.length || oversized.length > 0}>
             {busy ? '請稍候…' : '上傳'}
           </button>
         </div>

@@ -84,6 +84,7 @@ class Photo(models.Model):
     width = models.PositiveIntegerField(default=0)
     height = models.PositiveIntegerField(default=0)
     taken_on = models.DateField("拍攝日期")
+    taken_time = models.TimeField("拍攝時間", null=True, blank=True)
     note = models.TextField("留言", blank=True, max_length=NOTE_MAX)
     note_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
@@ -94,7 +95,7 @@ class Photo(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ["taken_on", "id"]  # the timeline runs oldest to newest
+        ordering = ["taken_on", "taken_time", "id"]  # the timeline runs oldest to newest
         verbose_name = verbose_name_plural = "照片"
 
     def __str__(self):
@@ -109,7 +110,7 @@ class Photo(models.Model):
         Raises ValueError if the file is not an image Pillow can read.
         """
         source = _read_image(upload)
-        taken_on = _exif_date(source) or fallback_date
+        exif_date, taken_time = _capture_time(source)
         source = _upright_rgb(source)
 
         stem = uuid.uuid4().hex
@@ -119,7 +120,8 @@ class Photo(models.Model):
             place=place,
             width=width,
             height=height,
-            taken_on=taken_on,
+            taken_on=exif_date or fallback_date,
+            taken_time=taken_time,
             note=note,
             note_by=user if note else None,
             uploaded_by=user,
@@ -187,18 +189,22 @@ def _upright_rgb(image):
     return image if image.mode == "RGB" else image.convert("RGB")
 
 
-def _exif_date(image):
-    """The day the photo was taken according to the camera, or None."""
+def _capture_time(image):
+    """Use camera-local wall time; preserve a valid date even when the clock is missing."""
     try:
         exif = image.getexif()
         raw = exif.get_ifd(ExifTags.IFD.Exif).get(ExifTags.Base.DateTimeOriginal) or exif.get(ExifTags.Base.DateTime)
         taken = datetime.strptime(str(raw)[:10], "%Y:%m:%d").date()
     except Exception:  # missing or malformed EXIF is normal
-        return None
+        return None, None
     # A camera with an unset clock can claim a date that has not happened yet.
     if taken > timezone.localdate() + timedelta(days=1):
-        return None
-    return taken
+        return None, None
+    try:
+        clock = datetime.strptime(str(raw)[11:19], "%H:%M:%S").time().replace(second=0)
+    except ValueError:
+        clock = None
+    return taken, clock
 
 
 def _jpeg(image, max_edge, quality):

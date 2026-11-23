@@ -81,6 +81,11 @@ function Note({ photo, authed, onChanged, onDeleted, onBusy }) {
               required
             />
           </label>
+          <label>
+            拍攝時間（選填）
+            <input type="time" value={draft.taken_time ?? ''}
+              onChange={(e) => setDraft({ ...draft, taken_time: e.target.value || null })} />
+          </label>
         </div>
       )}
 
@@ -105,9 +110,9 @@ function Note({ photo, authed, onChanged, onDeleted, onBusy }) {
             <>
               <button
                 className="btn primary"
-                onClick={() => setDraft({ note: photo.note, taken_on: photo.taken_on })}
+                onClick={() => setDraft({ note: photo.note, taken_on: photo.taken_on, taken_time: photo.taken_time?.slice(0, 5) || null })}
               >
-                <Icon name="pencil" /> {photo.note ? '編輯留言' : '寫留言'}
+                <Icon name="pencil" /> 編輯照片
               </button>
               <button className="btn ghost danger" onClick={() => setConfirming(true)}>
                 <Icon name="trash" /> 刪除照片
@@ -185,7 +190,7 @@ export default function PhotoPage({ place, photos, index, authed, onStep, onChan
         </div>
         <div>
           <div className="stamp">
-            <span className="date">{photo.taken_on.slice(0, 7).replace('-', '.')}</span>
+            <span className="date">{photo.taken_on.replaceAll('-', '.')}{photo.taken_time && ' ' + photo.taken_time.slice(0, 5)}</span>
             <span className="where">
               <Icon name="pin" /> {place.name}
             </span>
