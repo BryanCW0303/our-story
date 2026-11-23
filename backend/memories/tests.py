@@ -108,7 +108,7 @@ class ApiTests(TestCase):
         data = response.json()
         self.assertEqual((data["width"], data["height"]), (2560, 1707))
         self.assertEqual(data["taken_on"], "2026-03-28")  # the camera's date wins over the form's
-        self.assertEqual(data["taken_time"], "10:15:00")
+        self.assertNotIn("taken_time", data)
         self.assertEqual((data["note"], data["note_by"]), ("櫻花", "tester"))
         self.assertTrue(data["image"].startswith("/media/photos/tokyo/"))
 
@@ -116,18 +116,7 @@ class ApiTests(TestCase):
         body = {"image": _jpeg_upload(size=(40, 30)), "taken_on": "2026-11-04"}
         data = self.member.post("/api/places/tokyo/photos/", body, format="multipart").json()
         self.assertEqual(data["taken_on"], "2026-11-04")
-        self.assertIsNone(data["taken_time"])
         self.assertEqual((data["note"], data["note_by"]), ("", ""))
-
-    def test_edit_capture_time_without_changing_date(self):
-        photo = self._photo(date(2026, 1, 1))
-        url = f"/api/photos/{photo.pk}/"
-        for value, expected in [("00:00", "00:00:00"), ("23:59", "23:59:00"), (None, None)]:
-            result = self.member.patch(url, {"taken_time": value}, format="json")
-            self.assertEqual(result.status_code, 200)
-            self.assertEqual(self.member.get(url).json()["taken_time"], expected)
-            self.assertEqual(result.json()["taken_on"], "2026-01-01")
-        self.assertEqual(self.member.patch(url, {"taken_time": "25:00"}, format="json").status_code, 400)
 
     def test_photo_size_boundary(self):
         size = _jpeg_upload(size=(40, 30)).size

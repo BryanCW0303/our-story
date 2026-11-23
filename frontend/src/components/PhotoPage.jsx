@@ -81,11 +81,6 @@ function Note({ photo, authed, onChanged, onDeleted, onBusy }) {
               required
             />
           </label>
-          <label>
-            拍攝時間（選填）
-            <input type="time" value={draft.taken_time ?? ''}
-              onChange={(e) => setDraft({ ...draft, taken_time: e.target.value || null })} />
-          </label>
         </div>
       )}
 
@@ -110,7 +105,7 @@ function Note({ photo, authed, onChanged, onDeleted, onBusy }) {
             <>
               <button
                 className="btn primary"
-                onClick={() => setDraft({ note: photo.note, taken_on: photo.taken_on, taken_time: photo.taken_time?.slice(0, 5) || null })}
+                onClick={() => setDraft({ note: photo.note, taken_on: photo.taken_on })}
               >
                 <Icon name="pencil" /> 編輯照片
               </button>
@@ -190,7 +185,7 @@ export default function PhotoPage({ place, photos, index, authed, onStep, onChan
         </div>
         <div>
           <div className="stamp">
-            <span className="date">{photo.taken_on.replaceAll('-', '.')}{photo.taken_time && ' ' + photo.taken_time.slice(0, 5)}</span>
+            <span className="date">{photo.taken_on.replaceAll('-', '.')}</span>
             <span className="where">
               <Icon name="pin" /> {place.name}
             </span>

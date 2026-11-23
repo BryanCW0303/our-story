@@ -76,7 +76,7 @@ export default function UploadForm({ place, onClose, onUploaded }) {
         <label>
           拍攝日期
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
-          <small>照片本身有記錄拍攝時間的話，會自動用那個時間；沒有的才用這裡選的日期。</small>
+          <small>優先使用照片記錄的拍攝日期；沒有記錄時，使用這裡選的日期。</small>
         </label>
         <label>
           留言（可以之後再寫）

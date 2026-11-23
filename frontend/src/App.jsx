@@ -31,10 +31,7 @@ function readRoute() {
   }
 }
 
-const oldestFirst = (a, b) =>
-  a.taken_on.localeCompare(b.taken_on) ||
-  (a.taken_time ?? '').localeCompare(b.taken_time ?? '') ||
-  a.id - b.id
+const oldestFirst = (a, b) => a.taken_on.localeCompare(b.taken_on) || a.id - b.id
 
 export default function App({ onLoggedOut }) {
   const [route, setRoute] = useState(readRoute)
