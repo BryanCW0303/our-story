@@ -1,6 +1,6 @@
-import { coverUrl } from '../activities.js'
-import Icon from './Icon.jsx'
-import { Badge } from './Landmark.jsx'
+import { coverUrl } from './catalog.js'
+import Icon from '../../components/Icon.jsx'
+import { Badge } from '../../components/Landmark.jsx'
 
 /** One kind of thing we did together, as a wall of covers. */
 export default function ActivityPage({ activity }) {

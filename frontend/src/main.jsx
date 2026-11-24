@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 import '@fontsource/noto-serif-tc/500.css'
 import '@fontsource/noto-serif-tc/700.css'
 import '@fontsource/lxgw-wenkai-tc/400.css'
-import SessionGate from './SessionGate.jsx'
+import SessionGate from './features/session/SessionGate.jsx'
 import './styles.css'
 
 // A tab opened before a deployment may still reference the previous member bundle.

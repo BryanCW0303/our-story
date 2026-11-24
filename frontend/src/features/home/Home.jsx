@@ -1,17 +1,11 @@
-import { ACTIVITIES } from '../activities.js'
-import { parseDate } from '../api.js'
+import { KINDS } from '../places/kinds.js'
+import { ACTIVITIES } from '../activities/catalog.js'
+import { parseDate } from '../../dates.js'
 import FootprintTimeline from './FootprintTimeline.jsx'
-import Icon from './Icon.jsx'
-import { Badge } from './Landmark.jsx'
+import Icon from '../../components/Icon.jsx'
+import { Badge } from '../../components/Landmark.jsx'
 
 const DAY_MS = 24 * 60 * 60 * 1000
-
-/** The groups of places on the home page, in display order. `short` is for the small labels in the summary. */
-export const KINDS = [
-  { kind: 'now', name: '現居地', short: '現居地', icon: 'home' },
-  { kind: 'past', name: '曾經居住過的地方', short: '曾住過', icon: 'history' },
-  { kind: 'trip', name: '旅遊地點', short: '旅遊地點', icon: 'plane' },
-]
 
 function daysTogether(startDate) {
   const today = new Date()

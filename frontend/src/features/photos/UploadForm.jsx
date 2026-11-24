@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { api, NOTE_MAX, todayString } from '../api.js'
-import Icon from './Icon.jsx'
-import Modal from './Modal.jsx'
+import { api } from '../../api.js'
+import { todayString } from '../../dates.js'
+import { NOTE_MAX } from '../../notes.js'
+import Icon from '../../components/Icon.jsx'
+import Modal from '../../components/Modal.jsx'
 
 const MIB = 1024 * 1024
 const MAX_PHOTO_BYTES = 80 * MIB

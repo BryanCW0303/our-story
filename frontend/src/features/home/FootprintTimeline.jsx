@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from 'react'
-import { Badge } from './Landmark.jsx'
+import { Badge } from '../../components/Landmark.jsx'
 import './FootprintTimeline.css'
 
 const months = Array.from({ length: 12 }, (_, i) => i + 1)

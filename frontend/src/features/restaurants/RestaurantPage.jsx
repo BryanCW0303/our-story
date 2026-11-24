@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { api, NOTE_MAX } from '../api.js'
-import Icon from './Icon.jsx'
-import Modal from './Modal.jsx'
+import { api } from '../../api.js'
+import { NOTE_MAX } from '../../notes.js'
+import Icon from '../../components/Icon.jsx'
+import Modal from '../../components/Modal.jsx'
 import RestaurantForm from './RestaurantForm.jsx'
 
 export default function RestaurantPage({ place, restaurant, authed, onChanged, onDeleted }) {

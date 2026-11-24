@@ -1,8 +1,8 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { api, REFUSED } from './api.js'
-import LoginForm from './components/LoginForm.jsx'
+import { api, REFUSED } from '../../api.js'
+import LoginForm from './LoginForm.jsx'
 
-const MemberApp = lazy(() => import('./App.jsx'))
+const MemberApp = lazy(() => import('../../App.jsx'))
 
 export default function SessionGate() {
   const [session, setSession] = useState(null)

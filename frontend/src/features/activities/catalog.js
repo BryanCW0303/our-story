@@ -2,10 +2,10 @@
 // 要加一項：把封面圖（寬 600px 左右的 .jpg）放進 src/assets/covers/，在下面對應的類別加一行，
 // 並在 src/assets/covers/SOURCES.md 記下圖片來源，然後重新建置前端。
 
-const files = import.meta.glob('./assets/covers/*.jpg', { eager: true, query: '?url', import: 'default' })
+const files = import.meta.glob('../../assets/covers/*.jpg', { eager: true, query: '?url', import: 'default' })
 
 /** The bundled URL of a cover, by its file name without the extension. */
-export const coverUrl = (name) => files[`./assets/covers/${name}.jpg`]
+export const coverUrl = (name) => files[`../../assets/covers/${name}.jpg`]
 
 export const ACTIVITIES = [
   {

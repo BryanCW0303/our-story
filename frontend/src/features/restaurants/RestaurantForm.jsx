@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { api } from '../api.js'
-import Modal from './Modal.jsx'
+import { api } from '../../api.js'
+import Modal from '../../components/Modal.jsx'
 
 /** Add a favourite restaurant to a place, or edit one (pass `restaurant`). Only the name is required. */
 export default function RestaurantForm({ place, restaurant, onClose, onSaved }) {

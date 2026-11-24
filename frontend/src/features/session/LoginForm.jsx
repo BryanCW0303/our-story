@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { api } from '../api.js'
-import Modal from './Modal.jsx'
+import { api } from '../../api.js'
+import Modal from '../../components/Modal.jsx'
 
 export default function LoginForm({ onClose, onLoggedIn }) {
   const [username, setUsername] = useState('')
