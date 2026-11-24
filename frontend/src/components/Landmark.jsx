@@ -13,7 +13,7 @@ const ground = (color) => `<ellipse cx="60" cy="108" rx="40" ry="5" fill="${colo
 const ICONS = {
   // 西雅圖：太空針塔
   seattle: `${ground('#c5dccb')}
-    <path d="M90 26q2-8 9-5 8-2 8 5z" fill="#fff" stroke-width="2"/>
+    <path data-motion="drifting-cloud" d="M90 26q2-8 9-5 8-2 8 5z" fill="#fff" stroke-width="2"/>
     <path d="M60 8v16"/>
     <path d="M50 56Q58 84 40 108h12l8-18 8 18h12Q62 84 70 56z" fill="#fffaf2"/>
     <path d="M44 35q16-20 32 0z" fill="#fffaf2"/>
@@ -23,7 +23,7 @@ const ICONS = {
   // 廣州：廣州塔（小蠻腰）
   guangzhou: `${ground('#f3d5dc')}
     <path d="M60 6v20"/>
-    <path d="M40 108C52 84 55 66 53 54 51 42 48 34 47 24h26c-1 10-4 18-6 30-2 12 1 30 13 54z" fill="#f6bccb"/>
+    <path data-motion="canton-colors" d="M40 108C52 84 55 66 53 54 51 42 48 34 47 24h26c-1 10-4 18-6 30-2 12 1 30 13 54z" fill="#f6bccb"/>
     <path d="M48 30l18 20M72 30L54 50M54 58l10 14M66 58L56 72M48 36h24M52 50h16" stroke="#fff" stroke-width="1.8" opacity=".85"/>
     <path d="M90 28v10M85 33h10M26 48v8M22 52h8" stroke="#f2b872" stroke-width="2.6"/>
     <circle cx="60" cy="6" r="3" fill="#f2b872"/>
@@ -31,8 +31,8 @@ const ICONS = {
   // 溫哥華（居住地）：UBC 的鐘樓和圖書館
   vancouver: `${ground('#cfdcc6')}
     <rect x="82" y="16" width="18" height="90" rx="3" fill="#f4f1ea"/>
-    <circle class="campus-clock" cx="91" cy="31" r="6" fill="#fffaf2" stroke-width="2.2"/>
-    <path d="M91 31v-3.500M91 31l2.500 1.500" stroke-width="1.8"/>
+    <circle cx="91" cy="31" r="6" fill="#fffaf2" stroke-width="2.2"/>
+    <path data-motion="clock-hands" d="M91 31v-3.500M91 31l2.500 1.500" stroke-width="1.8"/>
     <path d="M88 46v50M94 46v50" stroke-width="1.5" opacity=".3"/>
     <rect x="20" y="62" width="56" height="44" fill="#ece4d2"/>
     <path d="M15 63L48 39l33 24z" fill="#9db6c9"/>
@@ -48,7 +48,7 @@ const ICONS = {
     <path d="M46 71h28l18 37H76Q60 80 44 108H28z" fill="#f08f7e"/>
     <path d="M53 22h14l7 40H46z" fill="#f08f7e"/>
     <path d="M52 28h16l1.400 8H50.600z" fill="#fffaf2" stroke-width="2"/>
-    <rect class="tower-light" x="40" y="60" width="40" height="11" rx="4.500" fill="#fffaf2"/>
+    <rect data-motion="tower-lights" x="40" y="60" width="40" height="11" rx="4.500" fill="#fffaf2"/>
     <path d="M51 80h18M42 94h9M69 94h9" stroke="#fff" stroke-width="1.8" opacity=".85"/>
     <g fill="#f8c9d4" stroke-width="2">
       <circle cx="98" cy="30" r="6"/><circle cx="22" cy="52" r="4.500"/>
@@ -64,14 +64,14 @@ const ICONS = {
     <path d="M58 76h10M58 86h10M58 96h10" stroke-width="1.6" opacity=".35"/>
     <path d="M94 80l-8 26M94 80l8 26"/>
     <circle cx="94" cy="80" r="16" fill="#fde6da"/>
-    <path d="M94 64v32M78 80h32M82.700 68.700l22.600 22.600M105.300 68.700l-22.600 22.600" stroke-width="1.5" opacity=".4"/>
+    <path data-motion="ferris-wheel" d="M94 64v32M78 80h32M82.700 68.700l22.600 22.600M105.300 68.700l-22.600 22.600" stroke-width="1.5" opacity=".4"/>
     <circle cx="94" cy="80" r="3.5" fill="#ef8f7d"/>
     <path d="M8 108q7-6 14 0t14 0 14 0 14 0 14 0 14 0 14 0" stroke="#7fb0bf"/>
     ${face(63, 52, 6)}`,
   // 成都：大熊貓
   chengdu: `<path d="M98 16v92" stroke="#93bb7d" stroke-width="8"/>
     <path d="M93 44h10M93 76h10" stroke="#6f9a5c" stroke-width="2"/>
-    <path d="M100 30q12-12 18-3-9 8-18 3z" fill="#b3d69a" stroke="#6f9a5c" stroke-width="2"/>
+    <path data-motion="bamboo-leaf" d="M100 30q12-12 18-3-9 8-18 3z" fill="#b3d69a" stroke="#6f9a5c" stroke-width="2"/>
     <circle cx="27" cy="40" r="13" fill="${K}"/><circle cx="79" cy="40" r="13" fill="${K}"/>
     <ellipse cx="53" cy="68" rx="37" ry="33" fill="#fffaf2"/>
     <g stroke="none">
@@ -86,8 +86,9 @@ const ICONS = {
   chongqing: `${ground('#ecdcc0')}
     <path d="M24 82v24" stroke="#b5a99d" stroke-width="7"/>
     <path d="M4 79h112" stroke="#b5a99d" stroke-width="6"/>
-    <rect x="8" y="50" width="62" height="26" rx="12" fill="#a9d6c4"/>
+    <g data-motion="passing-train"><rect x="8" y="50" width="62" height="26" rx="12" fill="#a9d6c4"/>
     <path d="M8 68h40" stroke-width="1.6" opacity=".35"/>
+    ${face(26, 60, 6)}</g>
     <rect x="46" y="12" width="54" height="96" rx="7" fill="#f3dcb8"/>
     <path d="M46 46h54M46 84h54" stroke-width="1.6" opacity=".35"/>
     <g fill="#fffaf2" stroke-width="1.6">
@@ -96,7 +97,7 @@ const ICONS = {
       <rect x="54" y="91" width="9" height="8" rx="2"/><rect x="68.500" y="91" width="9" height="8" rx="2"/><rect x="83" y="91" width="9" height="8" rx="2"/>
     </g>
     <path d="M56 58h34M56 66h34M56 74h34" stroke-width="1.6" opacity=".25"/>
-    ${face(26, 60, 6)}`,
+    `,
   // 澳門：大三巴牌坊
   macau: `${ground('#d9d0e6')}
     <path d="M24 109l8-11h56l8 11z" fill="#dccfb6"/>
@@ -109,11 +110,11 @@ const ICONS = {
     <g fill="#8a6a58" stroke-width="1.8"><rect x="49" y="34" width="5" height="7" rx="2.500"/><rect x="66" y="34" width="5" height="7" rx="2.500"/></g>
     <path d="M47 30l13-14 13 14z" fill="#f8eed9"/>
     <path d="M60 16V5M56 9h8"/>
-    <path d="M98 30l2.500 5 5 2.500-5 2.500-2.500 5-2.500-5-5-2.500 5-2.500z" fill="#f2b872" stroke-width="2"/>
+    <path data-motion="glint" d="M98 30l2.500 5 5 2.500-5 2.500-2.500 5-2.500-5-5-2.500 5-2.500z" fill="#f2b872" stroke-width="2"/>
     ${face(60, 51, 8)}`,
   // 溫哥華（旅遊）：煤氣鎮蒸汽鐘
   'vancouver-trip': `${ground('#e4dcc0')}
-    <g class="clock-steam" fill="#fff" stroke-width="2"><circle cx="41" cy="13" r="4.500"/><circle cx="34" cy="7" r="3"/><circle cx="79" cy="13" r="4.500"/><circle cx="86" cy="7" r="3"/></g>
+    <g data-motion="rising-steam" fill="#fff" stroke-width="2"><circle cx="41" cy="13" r="4.500"/><circle cx="34" cy="7" r="3"/><circle cx="79" cy="13" r="4.500"/><circle cx="86" cy="7" r="3"/></g>
     <path d="M46 26v-7M74 26v-7"/>
     <rect x="40" y="96" width="40" height="12" rx="3" fill="#a07c62"/>
     <rect x="46" y="58" width="28" height="38" rx="3" fill="#cfe3e8"/>
@@ -128,7 +129,7 @@ const ICONS = {
     <path d="M33 108l4-62h11l-2 62z" fill="#e8674a"/>
     <path d="M74 108l-2-62h11l4 62z" fill="#e8674a"/>
     <rect x="25" y="54" width="70" height="10" rx="2.500" fill="#e8674a"/>
-    <rect x="54" y="42" width="12" height="12" fill="#f6cf5e" stroke-width="2.2"/>
+    <rect data-motion="swaying-plaque" x="54" y="42" width="12" height="12" fill="#f6cf5e" stroke-width="2.2"/>
     <path d="M17 28q43-11 86 0l-4 16q-39-9-78 0z" fill="#e8674a"/>
     <path d="M13 24q47-13 94 0l-2 6q-45-12-90 0z" fill="${K}" stroke-width="2"/>
     <g fill="#5a4336" stroke="none"><rect x="30" y="102" width="19" height="7" rx="2"/><rect x="71" y="102" width="19" height="7" rx="2"/></g>
@@ -158,9 +159,9 @@ const ICONS = {
     <circle cx="95" cy="67" r="4.500" fill="#f2b872" stroke-width="2.200"/>
     ${face(60, 60, 8)}`,
   // 其他地點（之後在後台新增、還沒畫圖示的）：一個圖釘
-  fallback: `${ground('#f3d5dc')}
+  fallback: `${ground('#f3d5dc')}<g data-motion="pin-bounce">
     <path d="M60 102C42 80 32 66 32 50a28 28 0 0 1 56 0c0 16-10 30-28 52z" fill="#f6bccb"/>
-    ${face(60, 48, 8)}`,
+    ${face(60, 48, 8)}</g>`,
 }
 
 export default function Landmark({ slug }) {

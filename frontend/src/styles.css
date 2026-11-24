@@ -1263,25 +1263,40 @@ section + .divider {
 .album-slide img { width: 100%; height: 100%; min-height: 0; max-height: 100%; object-fit: contain; pointer-events: none; }
 @media (max-width: 700px) { .album-track { height: min(56vh, 100vw); } }
 
-/* These landmarks animate only in the selected city's header. */
-@media (prefers-reduced-motion: no-preference) {
-  .place-head .clock-steam {
-    transform-box: fill-box;
-    transform-origin: center bottom;
-    animation: clock-steam-rise 1.15s ease-out;
-  }
-  .place-head .tower-light, .place-head .campus-clock {
-    animation: landmark-light .95s ease-in-out;
+/* Animate only the small moving part of each hand-drawn landmark. */
+.badge [data-motion] { transform-box: fill-box; transform-origin: center; }
+[data-motion="drifting-cloud"] { --landmark-motion: drifting-cloud; }
+[data-motion="canton-colors"] { --landmark-motion: canton-colors; }
+.badge [data-motion="clock-hands"] { --landmark-motion: landmark-turn; transform-box: view-box; transform-origin: 91px 31px; }
+[data-motion="tower-lights"] { --landmark-motion: tower-lights; }
+[data-motion="ferris-wheel"] { --landmark-motion: landmark-turn; }
+.badge [data-motion="bamboo-leaf"] { --landmark-motion: leaf-rustle; transform-origin: left bottom; }
+[data-motion="passing-train"] { --landmark-motion: passing-train; }
+[data-motion="glint"] { --landmark-motion: facade-glint; }
+.badge [data-motion="rising-steam"] { --landmark-motion: rising-steam; transform-origin: center bottom; }
+.badge [data-motion="swaying-plaque"] { --landmark-motion: plaque-swing; transform-origin: center top; }
+[data-motion="pin-bounce"] { --landmark-motion: pin-bounce; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .badge:hover [data-motion], a:focus-visible .badge [data-motion] {
+    animation: var(--landmark-motion) 2.8s ease-in-out;
   }
 }
-@keyframes clock-steam-rise {
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  .place-head .badge [data-motion] { animation: var(--landmark-motion) 2.8s ease-in-out; }
+}
+@keyframes drifting-cloud { 45% { transform: translate(-13px, -2px); } }
+@keyframes canton-colors { 32% { fill: #e7addb; } 65% { fill: #bbaddc; } }
+@keyframes landmark-turn { to { transform: rotate(360deg); } }
+@keyframes tower-lights { 35%, 65% { fill: #ffd363; filter: drop-shadow(0 0 4px #efa934); } }
+@keyframes leaf-rustle { 25%, 70% { transform: rotate(-17deg); } 48% { transform: rotate(10deg); } }
+@keyframes passing-train { 45%, 57% { transform: translateX(36px); } }
+@keyframes facade-glint { 45% { transform: scale(1.35) rotate(18deg); fill: #ffe5a2; } }
+@keyframes rising-steam {
   0% { opacity: 0; transform: translateY(7px) scale(.65); }
-  35% { opacity: .9; }
-  78% { opacity: 0; transform: translateY(-5px) scale(1.1); }
+  35% { opacity: .95; }
+  78% { opacity: 0; transform: translate(-2px, -6px) scale(1.15); }
   79% { opacity: 0; transform: none; }
-  100% { opacity: 1; transform: none; }
+  100% { opacity: 1; }
 }
-@keyframes landmark-light {
-  0%, 100% { fill: #fffaf2; }
-  45% { fill: #ffd363; filter: drop-shadow(0 0 4px #efa934); }
-}
+@keyframes plaque-swing { 22% { transform: rotate(14deg); } 48% { transform: rotate(-10deg); } 74% { transform: rotate(5deg); } }
+@keyframes pin-bounce { 38% { transform: translateY(-7px); } 70% { transform: translateY(-2px); } }
