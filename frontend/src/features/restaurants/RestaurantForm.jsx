@@ -15,7 +15,7 @@ export default function RestaurantForm({ place, restaurant, onClose, onSaved }) 
 
   async function submit(event) {
     event.preventDefault()
-    if (!form.name.trim()) return setError('先填餐廳名')
+    if (!form.name.trim()) return setError('先填餐飲名稱')
     setBusy(true)
     setError('')
     try {
@@ -31,10 +31,10 @@ export default function RestaurantForm({ place, restaurant, onClose, onSaved }) 
   }
 
   return (
-    <Modal title={restaurant ? '編輯餐廳' : `新增餐廳到${place.name}`} onClose={onClose} locked={busy}>
+    <Modal title={restaurant ? '編輯餐飲' : `新增餐飲到${place.name}`} onClose={onClose} locked={busy}>
       <form onSubmit={submit} className="form" noValidate>
         <label>
-          餐廳名
+          餐飲名稱
           <input value={form.name} onChange={set('name')} maxLength={60} placeholder="例如：巷口拉麵" />
         </label>
         <label>

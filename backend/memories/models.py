@@ -120,7 +120,7 @@ class Restaurant(models.Model):
     """A favourite restaurant in a place. Legacy cover fields are retained for existing data."""
 
     place = models.ForeignKey(Place, on_delete=models.PROTECT, related_name="restaurants", verbose_name="地點")
-    name = models.CharField("餐廳名", max_length=60)
+    name = models.CharField("餐飲名稱", max_length=60)
     cuisine = models.CharField("種類", max_length=30, blank=True)
     must_order = models.CharField("必點", max_length=120, blank=True)
     image = models.ImageField(upload_to=_restaurant_path, blank=True)
@@ -136,7 +136,7 @@ class Restaurant(models.Model):
 
     class Meta:
         ordering = ["id"]  # in the order they were added
-        verbose_name = verbose_name_plural = "餐廳"
+        verbose_name = verbose_name_plural = "餐飲"
 
     def __str__(self):
         return f"{self.place} {self.name}"

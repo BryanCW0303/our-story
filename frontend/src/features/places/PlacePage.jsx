@@ -19,14 +19,14 @@ export default function PlacePage({ place, tab, photos, restaurants, authed, foc
         <div>
           <h1>{place.name}</h1>
           <p>
-            {kindName} · {place.photo_count} 張照片 · {place.restaurant_count} 間喜歡的餐廳
+            {kindName} · {place.photo_count} 張照片 · {place.restaurant_count} 筆喜歡的餐飲
           </p>
         </div>
         {authed && (
           <div className="actions">
             {onFood ? (
               <button className="btn primary" onClick={onAddRestaurant}>
-                <Icon name="plus" /> 新增餐廳
+                <Icon name="plus" /> 新增餐飲
               </button>
             ) : (
               <button className="btn primary" onClick={onUpload}>
@@ -44,7 +44,7 @@ export default function PlacePage({ place, tab, photos, restaurants, authed, foc
         </a>
         <a className={onFood ? 'tab on' : 'tab'} href={`#/p/${place.slug}/food`}>
           <Icon name="food" />
-          喜歡的餐廳<small>{place.restaurant_count}</small>
+          喜歡的餐飲<small>{place.restaurant_count}</small>
         </a>
       </nav>
 
