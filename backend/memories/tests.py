@@ -216,13 +216,12 @@ class ApiTests(TestCase):
         plain = self.member.post("/api/places/tokyo/restaurants/", body, format="multipart")
         self.assertEqual(plain.status_code, 201)
         self.assertEqual(plain.json()["name"], "巷口拉麵")
-        self.assertEqual((plain.json()["image"], plain.json()["note"]), (None, ""))
-
-        with_cover = {"name": "海邊小館", "image": _jpeg_upload(size=(2400, 1800)), "note": "看著海吃飯"}
-        data = self.member.post("/api/places/tokyo/restaurants/", with_cover, format="multipart").json()
-        self.assertTrue(data["image"].startswith("/media/restaurants/tokyo/"))
-        self.assertEqual((data["cuisine"], data["note_by"]), ("", "tester"))
-        self.assertEqual(Image.open(Restaurant.objects.get(id=data["id"]).image.path).size, (1600, 1200))
+        self.assertEqual(set(plain.json()), {"id", "name", "location", "must_order", "note", "note_by"})
+        record = Restaurant.objects.get(pk=plain.json()["id"])
+        self.assertEqual(record.cuisine, "")
+        second = {"name": "海邊小館", "note": "看著海吃飯"}
+        data = self.member.post("/api/places/tokyo/restaurants/", second, format="json").json()
+        self.assertEqual(data["note_by"], "tester")
 
         # Members can read the list, and the counts are not multiplied by the photos.
         self._photo(date(2026, 1, 1))
@@ -230,15 +229,11 @@ class ApiTests(TestCase):
         self._photo(date(2026, 1, 3))
         names = [r["name"] for r in self.member.get("/api/places/tokyo/restaurants/").json()]
         self.assertEqual(names, ["巷口拉麵", "海邊小館"])
-        self.assertEqual(self.anon.get(data["thumb"]).status_code, 404)
         tokyo = next(p for p in self.member.get("/api/places/").json() if p["slug"] == "tokyo")
         self.assertEqual((tokyo["photo_count"], tokyo["restaurant_count"]), (3, 2))
 
-    def test_restaurant_needs_a_name_and_a_real_picture(self):
+    def test_restaurant_needs_a_name(self):
         self.assertEqual(self.member.post("/api/places/tokyo/restaurants/", {"cuisine": "拉麵"}).status_code, 400)
-        fake = SimpleUploadedFile("a.jpg", b"not really a photo", content_type="image/jpeg")
-        bad = self.member.post("/api/places/tokyo/restaurants/", {"name": "x", "image": fake}, format="multipart")
-        self.assertEqual(bad.status_code, 400)
         self.assertEqual(Restaurant.objects.count(), 0)
         self.assertEqual(self.member.post("/api/places/atlantis/restaurants/", {"name": "x"}).status_code, 404)
 
@@ -253,20 +248,12 @@ class ApiTests(TestCase):
         created = {"name": "巷口拉麵", "image": _jpeg_upload(size=(400, 300))}
         first = self.member.post("/api/places/tokyo/restaurants/", created, format="multipart").json()
         url = f"/api/restaurants/{first['id']}/"
-        old_cover = Path(Restaurant.objects.get().image.path)
+        self.assertFalse(Restaurant.objects.get().image)
 
         data = self.member.patch(url, {"note": "湯頭很濃", "must_order": "加麵"}, format="json").json()
         self.assertEqual((data["note"], data["note_by"], data["must_order"]), ("湯頭很濃", "tester", "加麵"))
-        self.assertEqual(data["image"], first["image"])  # untouched when no new picture is sent
-
-        # A new picture replaces the old files.
-        data = self.member.patch(url, {"image": _jpeg_upload(size=(300, 300))}, format="multipart").json()
-        self.assertNotEqual(data["image"], first["image"])
-        self.assertFalse(old_cover.exists())
-
-        new_cover = Path(Restaurant.objects.get().image.path)
         self.assertEqual(self.member.delete(url).status_code, 204)
-        self.assertFalse(new_cover.exists())
+        self.assertFalse(Restaurant.objects.filter(pk=first["id"]).exists())
 
     def test_login_logout_flow_with_csrf(self):
         client = APIClient(enforce_csrf_checks=True)

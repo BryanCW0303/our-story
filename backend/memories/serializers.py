@@ -60,21 +60,12 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
-    # The cover is optional, so both URLs can be null.
-    image = serializers.SerializerMethodField()
-    thumb = serializers.SerializerMethodField()
     note = serializers.CharField(allow_blank=True, max_length=NOTE_MAX, trim_whitespace=True, required=False)
     note_by = serializers.SerializerMethodField()
 
     class Meta:
         model = Restaurant
-        fields = ["id", "name", "cuisine", "location", "must_order", "image", "thumb", "note", "note_by"]
-
-    def get_image(self, restaurant):
-        return restaurant.image.url if restaurant.image else None
-
-    def get_thumb(self, restaurant):
-        return restaurant.thumb.url if restaurant.thumb else None
+        fields = ["id", "name", "location", "must_order", "note", "note_by"]
 
     def get_note_by(self, restaurant):
         return display_name(restaurant.note_by) if restaurant.note else ""

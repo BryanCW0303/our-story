@@ -17,7 +17,6 @@ register_heif_opener()  # iPhone HEIC uploads
 
 DISPLAY_MAX = 2560  # long edge of the full-size version, px
 THUMB_MAX = 720  # long edge of the timeline thumbnail, px
-COVER_MAX = 1600  # long edge of a restaurant's cover picture, px
 NOTE_MAX = 500  # characters in the note written next to a photo
 
 
@@ -133,7 +132,7 @@ class Photo(models.Model):
 
 
 class Restaurant(models.Model):
-    """A favourite restaurant in a place. Everyone can see these; the cover picture is optional."""
+    """A favourite restaurant in a place. Legacy cover fields are retained for existing data."""
 
     place = models.ForeignKey(Place, on_delete=models.PROTECT, related_name="restaurants", verbose_name="地點")
     name = models.CharField("餐廳名", max_length=60)
@@ -157,17 +156,6 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return f"{self.place} {self.name}"
-
-    def set_cover(self, upload):
-        """Replace the cover picture with `upload`, without saving the row.
-
-        Raises ValueError if the file is not an image Pillow can read.
-        """
-        source = _upright_rgb(_read_image(upload))
-        self.remove_cover()
-        stem = uuid.uuid4().hex
-        self.image.save(f"{stem}.jpg", _jpeg(source, COVER_MAX, 88)[0], save=False)
-        self.thumb.save(f"{stem}_t.jpg", _jpeg(source, THUMB_MAX, 82)[0], save=False)
 
     def remove_cover(self):
         for field in (self.image, self.thumb):

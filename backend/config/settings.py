@@ -145,7 +145,6 @@ def WHITENOISE_IMMUTABLE_FILE_TEST(path, url):
 # Uploaded photos. Served by memories.views.media only for authenticated members.
 MEDIA_ROOT = DATA_DIR / "media"
 MEDIA_URL = "/media/"
-MAX_COVER_BYTES = 40 * 1024 * 1024
 MAX_PHOTO_BYTES = 80 * 1024 * 1024
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

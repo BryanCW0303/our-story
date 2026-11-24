@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef } from 'react'
 import { KINDS } from './Home.jsx'
 import Icon from './Icon.jsx'
 import { Badge } from './Landmark.jsx'
-import { RestaurantArt } from './RestaurantPage.jsx'
 
 /** Photos arrive sorted oldest first; cut them into one group per calendar month. */
 function byMonth(photos) {
@@ -70,7 +69,7 @@ function Timeline({ place, photos, authed, focusId }) {
   )
 }
 
-/** The place's favourite restaurants as a wall of covers. */
+/** The place's favourite restaurants. */
 function Restaurants({ place, restaurants, authed }) {
   if (!restaurants) return <p className="muted center">載入中…</p>
   if (!restaurants.length) {
@@ -82,15 +81,17 @@ function Restaurants({ place, restaurants, authed }) {
     )
   }
   return (
-    <div className="covers food">
+    <ul className="restaurant-list">
       {restaurants.map((restaurant) => (
-        <a className="cover" href={`#/p/${place.slug}/food/${restaurant.id}`} key={restaurant.id}>
-          <RestaurantArt restaurant={restaurant} />
-          <b>{restaurant.name}</b>
-          <small>{restaurant.cuisine}</small>
-        </a>
+        <li key={restaurant.id}>
+          <a href={`#/p/${place.slug}/food/${restaurant.id}`}>
+            <strong>{restaurant.name}</strong>
+            <span>{restaurant.location && <>位置 · {restaurant.location}</>}</span>
+            <span>{restaurant.must_order && <>必點 · {restaurant.must_order}</>}</span>
+          </a>
+        </li>
       ))}
-    </div>
+    </ul>
   )
 }
 

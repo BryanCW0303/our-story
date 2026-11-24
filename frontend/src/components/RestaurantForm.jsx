@@ -1,17 +1,14 @@
 import { useState } from 'react'
 import { api } from '../api.js'
-import Icon from './Icon.jsx'
 import Modal from './Modal.jsx'
 
 /** Add a favourite restaurant to a place, or edit one (pass `restaurant`). Only the name is required. */
 export default function RestaurantForm({ place, restaurant, onClose, onSaved }) {
   const [form, setForm] = useState({
     name: restaurant?.name ?? '',
-    cuisine: restaurant?.cuisine ?? '',
     location: restaurant?.location ?? '',
     must_order: restaurant?.must_order ?? '',
   })
-  const [file, setFile] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
@@ -22,52 +19,24 @@ export default function RestaurantForm({ place, restaurant, onClose, onSaved }) 
     if (!form.name.trim()) return setError('先填餐廳名')
     setBusy(true)
     setError('')
-    const body = new FormData()
-    for (const [key, value] of Object.entries(form)) body.append(key, value.trim())
-    if (file) body.append('image', file)
     try {
       onSaved(
         restaurant
-          ? await api(`restaurants/${restaurant.id}/`, { method: 'PATCH', form: body })
-          : await api(`places/${place.slug}/restaurants/`, { method: 'POST', form: body }),
+          ? await api(`restaurants/${restaurant.id}/`, { method: 'PATCH', json: form })
+          : await api(`places/${place.slug}/restaurants/`, { method: 'POST', json: form }),
       )
     } catch (err) {
-      setError(file ? `${file.name}：${err.message}` : err.message)
+      setError(err.message)
       setBusy(false)
     }
   }
 
-  let pick = '點這裡選一張照片，沒有也可以'
-  if (file) pick = `已選：${file.name}`
-  else if (restaurant?.image) pick = '點這裡換一張照片，不換就留空'
-
   return (
     <Modal title={restaurant ? '編輯餐廳' : `新增餐廳到${place.name}`} onClose={onClose} locked={busy}>
       <form onSubmit={submit} className="form" noValidate>
-        <div>
-          <span className="field-label">圖片（選填）</span>
-          <label className="drop">
-            <Icon name="photo" />
-            <span>{pick}</span>
-            <input
-              type="file"
-              accept="image/*"
-              hidden
-              disabled={busy}
-              onChange={(e) => {
-                setFile(e.target.files?.[0] ?? null)
-                setError('')
-              }}
-            />
-          </label>
-        </div>
         <label>
           餐廳名
           <input value={form.name} onChange={set('name')} maxLength={60} placeholder="例如：巷口拉麵" />
-        </label>
-        <label>
-          種類
-          <input value={form.cuisine} onChange={set('cuisine')} maxLength={30} placeholder="例如：拉麵、咖啡廳、燒烤" />
         </label>
         <label>
           位置

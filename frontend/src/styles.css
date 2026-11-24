@@ -549,26 +549,29 @@ a.cover {
   display: block;
 }
 
-.covers.food .art {
-  aspect-ratio: 4 / 3;
-}
 
-/* 沒有封面的餐廳：米色底加刀叉（選擇器要比下面 .cover .art 的白底更具體） */
-.cover .art.blank,
-.frame .art.blank {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f3e7d6;
-  color: var(--accent);
-  font-size: 34px;
+.restaurant-list {
+  list-style: none;
+  margin: 24px 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
 }
-
-.frame.food .art.blank {
-  width: 460px;
-  max-width: 100%;
-  aspect-ratio: 4 / 3;
-  font-size: 54px;
+.restaurant-list a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(2, minmax(0, 1.2fr));
+  align-items: baseline;
+  gap: 8px 24px;
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--line);
+  overflow-wrap: anywhere;
+}
+.restaurant-list a:hover, .restaurant-list a:focus-visible { background: var(--card); }
+.restaurant-list strong { font-family: var(--serif); }
+.restaurant-list span { color: var(--ink-soft); }
+.restaurant-detail { max-width: 720px; margin: auto; overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .restaurant-list a { grid-template-columns: 1fr; }
+  .restaurant-list span:empty { display: none; }
 }
 
 .rest-name {

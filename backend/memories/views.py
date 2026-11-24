@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
-from rest_framework import generics, permissions, serializers, status
+from rest_framework import generics, permissions, status
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
@@ -150,19 +150,6 @@ class PhotoDetailView(generics.RetrieveUpdateDestroyAPIView):
             serializer.save()
 
 
-def _set_cover(request, restaurant):
-    """Attach the uploaded cover picture, if the request carries one."""
-    upload = request.FILES.get("image")
-    if upload is None:
-        return
-    if upload.size > settings.MAX_COVER_BYTES:
-        raise serializers.ValidationError({"image": ["照片太大了"]})
-    try:
-        restaurant.set_cover(upload)
-    except ValueError as exc:
-        raise serializers.ValidationError({"image": ["這個檔案不是可以讀取的照片"]}) from exc
-
-
 class PlaceRestaurantsView(generics.ListCreateAPIView):
     """GET: the favourite restaurants of one place, in the order they were added. POST: add one."""
 
@@ -176,15 +163,11 @@ class PlaceRestaurantsView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         place = get_object_or_404(Place, slug=self.kwargs["slug"])
         user = self.request.user
-        fields = serializer.validated_data
-        restaurant = Restaurant(place=place, added_by=user, note_by=user if fields.get("note") else None, **fields)
-        _set_cover(self.request, restaurant)
-        restaurant.save()
-        serializer.instance = restaurant
+        serializer.save(place=place, added_by=user, note_by=user if serializer.validated_data.get("note") else None)
 
 
 class RestaurantDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """PATCH changes the details, the note or the cover picture; DELETE removes the restaurant and its files."""
+    """Update restaurant details and notes, or remove a restaurant."""
 
     queryset = Restaurant.objects.select_related("note_by")
     serializer_class = RestaurantSerializer
@@ -197,7 +180,6 @@ class RestaurantDetailView(generics.RetrieveUpdateDestroyAPIView):
         note = serializer.validated_data.get("note")
         if note is not None and note != restaurant.note:
             extra["note_by"] = self.request.user if note else None  # whoever last rewrote the note signs it
-        _set_cover(self.request, restaurant)
         serializer.save(**extra)
 
 

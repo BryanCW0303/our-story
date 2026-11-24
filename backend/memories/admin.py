@@ -25,11 +25,11 @@ class PhotoAdmin(admin.ModelAdmin):
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ["name", "place", "cuisine", "location", "added_by"]
+    list_display = ["name", "place", "location", "added_by"]
     list_filter = ["place"]
-    search_fields = ["name", "cuisine", "location", "must_order", "note"]
-    # Cover files are produced by the upload code; the admin only edits the text.
-    readonly_fields = ["image", "thumb", "added_by", "created_at"]
+    search_fields = ["name", "location", "must_order", "note"]
+    exclude = ["image", "thumb", "cuisine"]
+    readonly_fields = ["added_by", "created_at"]
 
     def has_add_permission(self, request):
         return False
