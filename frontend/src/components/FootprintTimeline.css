@@ -46,21 +46,12 @@
 }
 
 .replay-motion { display: block; margin: 0 0 6px auto; padding: 5px 12px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); color: var(--ink-soft); font: inherit; }
-.home-bridge { position: relative; }
 .home-bridge b { font-weight: normal; }
-@keyframes footprint-heart {
-  from { left: 12%; opacity: 0; }
-  75% { left: 82%; opacity: 1; }
-  to { left: 50%; }
-}
 @keyframes footprint-rise { from { opacity: .3; transform: translateY(6px); } }
 @keyframes footprint-mark { from { opacity: .2; transform: scale(.45); } }
 @media (prefers-reduced-motion: no-preference) {
   .hero h1 { animation: footprint-rise .45s ease-out backwards; }
   .playing .home-pair .badge, .playing .travel-trail li { animation: footprint-rise .4s ease-out backwards; }
-  .playing .home-bridge b { position: relative; }
-  .playing .home-bridge { height: 1.5em; }
-  .playing .home-bridge b { position: absolute; left: 50%; transform: translateX(-50%); padding: 0 4px; background: #fffaf3; animation: footprint-heart 1.1s ease-in-out backwards; }
   .playing .residence-months i { animation: footprint-mark .28s ease-out backwards; }
   .timeline-city:hover .badge { transform: translateY(-3px) rotate(-3deg); }
 }
