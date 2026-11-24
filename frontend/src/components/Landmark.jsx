@@ -31,7 +31,7 @@ const ICONS = {
   // 溫哥華（居住地）：UBC 的鐘樓和圖書館
   vancouver: `${ground('#cfdcc6')}
     <rect x="82" y="16" width="18" height="90" rx="3" fill="#f4f1ea"/>
-    <circle cx="91" cy="31" r="6" fill="#fffaf2" stroke-width="2.2"/>
+    <circle class="campus-clock" cx="91" cy="31" r="6" fill="#fffaf2" stroke-width="2.2"/>
     <path d="M91 31v-3.500M91 31l2.500 1.500" stroke-width="1.8"/>
     <path d="M88 46v50M94 46v50" stroke-width="1.5" opacity=".3"/>
     <rect x="20" y="62" width="56" height="44" fill="#ece4d2"/>
@@ -48,7 +48,7 @@ const ICONS = {
     <path d="M46 71h28l18 37H76Q60 80 44 108H28z" fill="#f08f7e"/>
     <path d="M53 22h14l7 40H46z" fill="#f08f7e"/>
     <path d="M52 28h16l1.400 8H50.600z" fill="#fffaf2" stroke-width="2"/>
-    <rect x="40" y="60" width="40" height="11" rx="4.500" fill="#fffaf2"/>
+    <rect class="tower-light" x="40" y="60" width="40" height="11" rx="4.500" fill="#fffaf2"/>
     <path d="M51 80h18M42 94h9M69 94h9" stroke="#fff" stroke-width="1.8" opacity=".85"/>
     <g fill="#f8c9d4" stroke-width="2">
       <circle cx="98" cy="30" r="6"/><circle cx="22" cy="52" r="4.500"/>
@@ -113,7 +113,7 @@ const ICONS = {
     ${face(60, 51, 8)}`,
   // 溫哥華（旅遊）：煤氣鎮蒸汽鐘
   'vancouver-trip': `${ground('#e4dcc0')}
-    <g fill="#fff" stroke-width="2"><circle cx="41" cy="13" r="4.500"/><circle cx="34" cy="7" r="3"/><circle cx="79" cy="13" r="4.500"/><circle cx="86" cy="7" r="3"/></g>
+    <g class="clock-steam" fill="#fff" stroke-width="2"><circle cx="41" cy="13" r="4.500"/><circle cx="34" cy="7" r="3"/><circle cx="79" cy="13" r="4.500"/><circle cx="86" cy="7" r="3"/></g>
     <path d="M46 26v-7M74 26v-7"/>
     <rect x="40" y="96" width="40" height="12" rx="3" fill="#a07c62"/>
     <rect x="46" y="58" width="28" height="38" rx="3" fill="#cfe3e8"/>
