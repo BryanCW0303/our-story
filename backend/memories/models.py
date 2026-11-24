@@ -1,22 +1,12 @@
 import uuid
-from datetime import datetime, timedelta
-from io import BytesIO
 
-from defusedxml import ElementTree
-from defusedxml.common import DefusedXmlException
 from django.conf import settings
-from django.core.files.base import ContentFile
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
-from django.utils import timezone
-from PIL import ExifTags, Image, ImageOps
-from pillow_heif import register_heif_opener
 
-register_heif_opener()  # iPhone HEIC uploads
+from .photo_images import prepare_photo
 
-DISPLAY_MAX = 2560  # long edge of the full-size version, px
-THUMB_MAX = 720  # long edge of the timeline thumbnail, px
 NOTE_MAX = 500  # characters in the note written next to a photo
 
 
@@ -109,13 +99,8 @@ class Photo(models.Model):
         is used for screenshots and other files without it.
         Raises ValueError if the file is not an image Pillow can read.
         """
-        source = _read_image(upload)
-        taken_on = _exif_date(source) or fallback_date
-        source = _upright_rgb(source)
-
+        display, thumb, (width, height), taken_on = prepare_photo(upload, fallback_date)
         stem = uuid.uuid4().hex
-        display, (width, height) = _jpeg(source, DISPLAY_MAX, 90)
-        thumb, _ = _jpeg(source, THUMB_MAX, 82)
         photo = cls(
             place=place,
             width=width,
@@ -160,87 +145,6 @@ class Restaurant(models.Model):
         for field in (self.image, self.thumb):
             if field:
                 field.delete(save=False)
-
-
-def _read_image(upload):
-    try:
-        image = Image.open(upload)
-        image.load()
-    except Exception as exc:  # Pillow raises many different types here
-        raise ValueError("not an image") from exc
-    return image
-
-
-def _upright_rgb(image):
-    image = ImageOps.exif_transpose(image)  # respect phone rotation
-    return image if image.mode == "RGB" else image.convert("RGB")
-
-
-def _photo_date(raw, latest):
-    """Read the camera-local calendar date, including for timestamps with an offset."""
-    if isinstance(raw, bytes):
-        raw = raw.decode("ascii", errors="replace")
-    if not isinstance(raw, str):
-        return None
-    prefix = raw.strip()[:10]
-    for fmt in ("%Y:%m:%d", "%Y-%m-%d"):
-        try:
-            day = datetime.strptime(prefix, fmt).date()
-        except ValueError:
-            continue
-        if day <= latest:
-            return day
-    return None
-
-
-def _xmp_capture_dates(image):
-    packet = image.info.get("xmp") or image.info.get("XML:com.adobe.xmp")
-    if not packet or len(packet) > 1024 * 1024:
-        return
-    try:
-        root = ElementTree.fromstring(packet, forbid_dtd=True)
-    except (ElementTree.ParseError, DefusedXmlException, ValueError, LookupError):
-        return
-    for tag in ("{http://ns.adobe.com/exif/1.0/}DateTimeOriginal",
-                "{http://ns.adobe.com/photoshop/1.0/}DateCreated",
-                "{http://ns.adobe.com/xap/1.0/}CreateDate"):
-        for node in root.iter():
-            if tag in node.attrib:
-                yield node.attrib[tag]
-            if node.tag == tag:
-                yield node.text
-
-
-def _exif_date(image):
-    latest = timezone.localdate() + timedelta(days=1)
-    try:
-        exif = image.getexif()
-    except Exception:  # A damaged EXIF block can coexist with usable XMP.
-        exif = {}
-    try:
-        details = exif.get_ifd(ExifTags.IFD.Exif)
-    except Exception:
-        details = {}
-    tag = ExifTags.Base
-    for raw in (details.get(tag.DateTimeOriginal), exif.get(tag.DateTimeOriginal)):
-        if day := _photo_date(raw, latest):
-            return day
-    for raw in _xmp_capture_dates(image):
-        if day := _photo_date(raw, latest):
-            return day
-    for raw in (details.get(tag.DateTimeDigitized), exif.get(tag.DateTimeDigitized), exif.get(tag.DateTime)):
-        if day := _photo_date(raw, latest):
-            return day
-    return None
-
-
-def _jpeg(image, max_edge, quality):
-    """Return (file, (width, height)) for a copy no larger than max_edge."""
-    copy = image.copy()
-    copy.thumbnail((max_edge, max_edge), Image.Resampling.LANCZOS)
-    buffer = BytesIO()
-    copy.save(buffer, "JPEG", quality=quality, optimize=True, progressive=True)
-    return ContentFile(buffer.getvalue()), copy.size
 
 
 @receiver(post_delete, sender=Photo)

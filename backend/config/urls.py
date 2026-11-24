@@ -1,18 +1,10 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
-from memories import views
+from memories.media import media
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/session/", views.SessionView.as_view()),
-    path("api/login/", views.LoginView.as_view()),
-    path("api/logout/", views.LogoutView.as_view()),
-    path("api/config/", views.SiteConfigView.as_view()),
-    path("api/places/", views.PlaceListView.as_view()),
-    path("api/places/<slug:slug>/photos/", views.PlacePhotosView.as_view()),
-    path("api/places/<slug:slug>/restaurants/", views.PlaceRestaurantsView.as_view()),
-    path("api/photos/<int:pk>/", views.PhotoDetailView.as_view()),
-    path("api/restaurants/<int:pk>/", views.RestaurantDetailView.as_view()),
-    path("media/<path:path>", views.media),
+    path("api/", include("memories.api.urls")),
+    path("media/<path:path>", media),
 ]

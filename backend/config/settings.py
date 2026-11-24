@@ -142,7 +142,7 @@ def WHITENOISE_IMMUTABLE_FILE_TEST(path, url):
     return url.startswith("/assets/")
 
 
-# Uploaded photos. Served by memories.views.media only for authenticated members.
+# Uploaded photos. Served by memories.media only for authenticated members.
 MEDIA_ROOT = DATA_DIR / "media"
 MEDIA_URL = "/media/"
 MAX_PHOTO_BYTES = 80 * 1024 * 1024
