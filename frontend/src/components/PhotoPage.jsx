@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { api, NOTE_MAX } from '../api.js'
 import Icon from './Icon.jsx'
 import Modal from './Modal.jsx'
@@ -138,21 +138,68 @@ function Note({ photo, authed, onChanged, onDeleted, onBusy }) {
 export default function PhotoPage({ place, photos, index, authed, onStep, onChanged, onDeleted }) {
   const photo = photos[index]
   const [paused, setPaused] = useState(false) // while the note is being edited or the delete dialog is open
-  const touchX = useRef(null)
+  const track = useRef(null)
+  const drag = useRef(null)
+  const arrival = useRef(null)
+  const previousDate = useRef(photo.taken_on)
+  const stamp = useRef(null)
   const canStep = photos.length > 1 && !paused
+
+  const step = useCallback((direction, offset = 0) => {
+    if (!canStep) return
+    drag.current = null
+    arrival.current = direction * track.current.clientWidth + offset
+    onStep(direction)
+  }, [canStep, onStep])
+
+  useLayoutEffect(() => {
+    const strip = track.current
+    strip.style.translate = ''
+    if (arrival.current !== null && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      strip.animate([{ translate: arrival.current + 'px' }, { translate: '0px' }],
+        { duration: 300, easing: 'cubic-bezier(.22,.72,.24,1)' })
+    }
+    arrival.current = null
+    drag.current = null
+    return () => strip.getAnimations().forEach(animation => animation.cancel())
+  }, [photo.id])
+
+  useLayoutEffect(() => {
+    if (previousDate.current !== photo.taken_on && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      stamp.current.animate([{ transform: 'translateY(7px)', opacity: .2 }, { transform: 'translateY(0)', opacity: 1 }],
+        { duration: 220, easing: 'ease-out' })
+    }
+    previousDate.current = photo.taken_on
+  }, [photo.taken_on])
+
+  function finishDrag(event) {
+    if (drag.current?.id !== event.pointerId) return
+    const distance = event.clientX - drag.current.x
+    const width = track.current.clientWidth
+    drag.current = null
+    if (canStep && event.type === 'pointerup' && Math.abs(distance) > Math.min(55, width * .15)) {
+      step(distance < 0 ? 1 : -1, Math.max(-width, Math.min(width, distance)))
+    } else {
+      const from = track.current.style.translate
+      track.current.style.translate = ''
+      if (from && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        track.current.animate([{ translate: from }, { translate: '0px' }], { duration: 160 })
+      }
+    }
+  }
 
   useEffect(() => {
     const onKey = (event) => {
       // Not while editing, typing in any field, or with a dialog (login, delete) open.
       if (paused || document.querySelector('.backdrop')) return
       if (/^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName)) return
-      if (event.key === 'ArrowLeft' && canStep) onStep(-1)
-      if (event.key === 'ArrowRight' && canStep) onStep(1)
+      if (event.key === 'ArrowLeft' && canStep) step(-1)
+      if (event.key === 'ArrowRight' && canStep) step(1)
       if (event.key === 'Escape') window.location.hash = `#/p/${place.slug}`
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [paused, canStep, onStep, place.slug])
+  }, [paused, canStep, step, place.slug])
 
   return (
     <>
@@ -161,31 +208,47 @@ export default function PhotoPage({ place, photos, index, authed, onStep, onChan
       </a>
       <div className="viewer">
         <div>
-          <div
-            className="frame"
-            onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
-            onTouchEnd={(e) => {
-              const moved = e.changedTouches[0].clientX - (touchX.current ?? e.changedTouches[0].clientX)
-              if (canStep && Math.abs(moved) > 50) onStep(moved < 0 ? 1 : -1)
-            }}
-          >
-            <img key={photo.id} src={photo.image} width={photo.width} height={photo.height} alt="" />
+          <div className="frame album-frame">
+            <div className="album-window"
+              onPointerDown={e => {
+                if (!canStep || !e.isPrimary || e.button !== 0) return
+                track.current.getAnimations().forEach(animation => animation.cancel())
+                drag.current = { id: e.pointerId, x: e.clientX }
+                e.currentTarget.setPointerCapture(e.pointerId)
+              }}
+              onPointerMove={e => {
+                if (drag.current?.id !== e.pointerId) return
+                const width = track.current.clientWidth
+                track.current.style.translate = Math.max(-width, Math.min(width, e.clientX - drag.current.x)) + 'px'
+              }}
+              onPointerUp={finishDrag} onPointerCancel={finishDrag} onLostPointerCapture={finishDrag}
+            >
+              <div ref={track} className="album-track">
+                {[-1, 0, 1].map(offset => {
+                  const item = photos[(index + offset + photos.length) % photos.length]
+                  return <div className="album-slide" key={offset} aria-hidden={offset !== 0}>
+                    {(offset === 0 || photos.length > 1) && <img src={item.image} width={item.width} height={item.height}
+                      draggable={false} alt={place.name + '相簿照片'} />}
+                  </div>
+                })}
+              </div>
+            </div>
           </div>
           <div className="pager">
-            <button className="round" onClick={() => onStep(-1)} disabled={!canStep} aria-label="上一張">
+            <button className="round" onClick={() => step(-1)} disabled={!canStep} aria-label="上一張">
               <Icon name="prev" />
             </button>
             <span>
               {index + 1} / {photos.length}
             </span>
-            <button className="round" onClick={() => onStep(1)} disabled={!canStep} aria-label="下一張">
+            <button className="round" onClick={() => step(1)} disabled={!canStep} aria-label="下一張">
               <Icon name="next" />
             </button>
           </div>
         </div>
         <div>
           <div className="stamp">
-            <span className="date">{photo.taken_on.replaceAll('-', '.')}</span>
+            <time ref={stamp} className="date" dateTime={photo.taken_on}>{photo.taken_on.replaceAll('-', '.')}</time>
             <span className="where">
               <Icon name="pin" /> {place.name}
             </span>

@@ -1255,3 +1255,10 @@ section + .divider {
     transition: none !important;
   }
 }
+
+.frame.album-frame { width: 100%; }
+.album-window { overflow: hidden; touch-action: pan-y pinch-zoom; user-select: none; }
+.album-track { display: flex; width: 100%; height: min(65vh, 480px); transform: translateX(-100%); }
+.album-slide { flex: 0 0 100%; min-width: 0; display: grid; place-items: center; background: #f4ece1; }
+.album-slide img { width: 100%; height: 100%; min-height: 0; max-height: 100%; object-fit: contain; pointer-events: none; }
+@media (max-width: 700px) { .album-track { height: min(56vh, 100vw); } }
