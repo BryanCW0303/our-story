@@ -1276,6 +1276,11 @@ section + .divider {
 .badge [data-motion="rising-steam"] { --landmark-motion: rising-steam; transform-origin: center bottom; }
 .badge [data-motion="swaying-plaque"] { --landmark-motion: plaque-swing; transform-origin: center top; }
 [data-motion="pin-bounce"] { --landmark-motion: pin-bounce; }
+/* Activity badges share the landmark hover, keyboard and touch triggers. */
+.badge [data-motion="clapper-snap"] { --landmark-motion: clapper-snap; transform-box: view-box; transform-origin: 25px 46px; }
+.badge [data-motion="brick-hop"] { --landmark-motion: brick-hop; transform-origin: center bottom; }
+[data-motion="game-button-a"] { --landmark-motion: game-button-a; }
+[data-motion="game-button-b"] { --landmark-motion: game-button-b; }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .badge:hover [data-motion], a:focus-visible .badge [data-motion] {
     animation: var(--landmark-motion) 2.8s ease-in-out;
@@ -1300,3 +1305,22 @@ section + .divider {
 }
 @keyframes plaque-swing { 22% { transform: rotate(14deg); } 48% { transform: rotate(-10deg); } 74% { transform: rotate(5deg); } }
 @keyframes pin-bounce { 38% { transform: translateY(-7px); } 70% { transform: translateY(-2px); } }
+@keyframes clapper-snap {
+  22% { transform: rotate(-9deg); }
+  35%, 48% { transform: rotate(12deg); }
+  70% { transform: rotate(-3deg); }
+}
+@keyframes brick-hop {
+  18% { transform: scale(1.04, .95); }
+  42% { transform: translateY(-10px) rotate(-4deg); }
+  62% { transform: scale(1.05, .94); }
+  78% { transform: translateY(-2px); }
+}
+@keyframes game-button-a {
+  15%, 48% { transform: scale(1); }
+  28%, 36% { transform: scale(.68); fill: #d57562; }
+}
+@keyframes game-button-b {
+  48%, 84% { transform: scale(1); }
+  61%, 71% { transform: scale(.68); fill: #d99645; }
+}

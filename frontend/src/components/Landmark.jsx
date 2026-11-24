@@ -140,23 +140,27 @@ const ICONS = {
     <rect x="24" y="52" width="72" height="52" rx="7" fill="#fffaf2"/>
     <rect x="24" y="46" width="72" height="13" fill="${K}"/>
     <path d="M38 47l-6 11M54 47l-6 11M70 47l-6 11M86 47l-6 11" stroke="#fffaf2" stroke-width="5"/>
-    <path d="M22 34l70-15 3 13-70 15z" fill="${K}"/>
-    <path d="M35 32l7 11M51 28.600l7 11M67 25.200l7 11M83 21.800l7 11" stroke="#fffaf2" stroke-width="5"/>
+    <g data-motion="clapper-snap">
+      <path d="M22 34l70-15 3 13-70 15z" fill="${K}"/>
+      <path d="M35 32l7 11M51 28.600l7 11M67 25.200l7 11M83 21.800l7 11" stroke="#fffaf2" stroke-width="5"/>
+    </g>
     <path d="M103 46l2.500 5 5 2.500-5 2.500-2.500 5-2.500-5-5-2.500 5-2.500z" fill="#f2b872" stroke-width="2"/>
     ${face(60, 78, 9)}`,
   // 活動：LEGO（一塊積木）
   'act-lego': `${ground('#e6dbb9')}
-    <rect x="33" y="32" width="22" height="16" rx="4" fill="#f4c95d"/>
-    <rect x="65" y="32" width="22" height="16" rx="4" fill="#f4c95d"/>
-    <rect x="22" y="44" width="76" height="60" rx="9" fill="#f4c95d"/>
-    <path d="M32 55v16" stroke="#fffaf2" stroke-width="3.500" opacity=".8"/>
-    ${face(60, 72, 10)}`,
+    <g data-motion="brick-hop">
+      <rect x="33" y="32" width="22" height="16" rx="4" fill="#f4c95d"/>
+      <rect x="65" y="32" width="22" height="16" rx="4" fill="#f4c95d"/>
+      <rect x="22" y="44" width="76" height="60" rx="9" fill="#f4c95d"/>
+      <path d="M32 55v16" stroke="#fffaf2" stroke-width="3.500" opacity=".8"/>
+      ${face(60, 72, 10)}
+    </g>`,
   // 活動：遊戲（手把）
   'act-game': `${ground('#d3dbea')}
     <path d="M30 44h60a18 18 0 0 1 18 18v16a14 14 0 0 1-26 7l-4-7H42l-4 7a14 14 0 0 1-26-7V62a18 18 0 0 1 18-18z" fill="#bccbe8"/>
     <path d="M34 55v14M27 62h14" stroke-width="5"/>
-    <circle cx="86" cy="57" r="4.500" fill="#ef8f7d" stroke-width="2.200"/>
-    <circle cx="95" cy="67" r="4.500" fill="#f2b872" stroke-width="2.200"/>
+    <circle data-motion="game-button-a" cx="86" cy="57" r="4.500" fill="#ef8f7d" stroke-width="2.200"/>
+    <circle data-motion="game-button-b" cx="95" cy="67" r="4.500" fill="#f2b872" stroke-width="2.200"/>
     ${face(60, 60, 8)}`,
   // 其他地點（之後在後台新增、還沒畫圖示的）：一個圖釘
   fallback: `${ground('#f3d5dc')}<g data-motion="pin-bounce">
