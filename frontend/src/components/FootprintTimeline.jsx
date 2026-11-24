@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { Badge } from './Landmark.jsx'
 import './FootprintTimeline.css'
 
@@ -26,6 +26,18 @@ function City({ place, english = false }) {
 
 export default function FootprintTimeline({ places }) {
   const [selection, setSelection] = useState('')
+  const timeline = useRef(null)
+  const [play, setPlay] = useState(0)
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setPlay(1)
+        observer.disconnect()
+      }
+    })
+    observer.observe(timeline.current)
+    return () => observer.disconnect()
+  }, [])
   const today = new Date()
   const entries = places.map((place) => ({ place, marked: timelineMonths(place, today) }))
   const years = [...new Set(entries.flatMap(({ marked }) => marked).map((date) => date.slice(0, 4)))].sort().reverse()
@@ -41,11 +53,12 @@ export default function FootprintTimeline({ places }) {
     cities: rows.filter(({ place, recorded }) => place.kind === 'trip' && recorded.includes(month)),
   })).filter(({ cities }) => cities.length)
 
-  return <section className="footprint-timeline">
+  return <section ref={timeline} className={'footprint-timeline' + (play ? ' playing' : '')}>
+    <button type="button" className="replay-motion" onClick={() => setPlay(n => n + 1)}>↻ 重播動態</button>
     {homes.length > 0 && <>
       <h3>{homes.length === 2 ? '我們現在分住兩地' : '我們的現居地'}</h3>
-      <div className="home-pair">{homes.map((place, i) => <Fragment key={place.slug}>
-        {i > 0 && <span className="home-bridge" aria-hidden="true">♡</span>}
+      <div className="home-pair" key={play}>{homes.map((place, i) => <Fragment key={place.slug}>
+        {i > 0 && <span className="home-bridge" aria-hidden="true"><b>♡</b></span>}
         <City place={place} english />
       </Fragment>)}</div>
     </>}
@@ -55,18 +68,18 @@ export default function FootprintTimeline({ places }) {
       </select>}
     </div>
     <h5>居住地</h5>
-    {residences.length ? <><table className="residence-months" aria-label={year + ' 年居住地月份'}>
+    {residences.length ? <><table key={year + play} className="residence-months" aria-label={year + ' 年居住地月份'}>
       <thead><tr><th scope="col">月份</th>{months.map((m) => <th scope="col" key={m}>{m}</th>)}</tr></thead>
       <tbody>{residences.map(({ place, recorded }) => <tr key={place.slug}>
         <th scope="row"><City place={place} /></th>
         {months.map((m) => <td key={m} aria-label={recorded.includes(m) ? (place.kind === 'now' ? '居住中' : '有照片') : '無標記'}>
-          {recorded.includes(m) && <i aria-hidden="true" />}
+          {recorded.includes(m) && <i aria-hidden="true" style={{ animationDelay: (m * 45) + 'ms' }} />}
         </td>)}
       </tr>)}</tbody>
     </table><p>現居地從第一張照片的月份標到本月；曾居地標示有照片的月份。</p></> : <p>尚無居住地照片。</p>}
     <h4 className="journey-heading">旅遊地</h4>
-    {stops.length ? <ol className="travel-trail" aria-label="按照片月份排列的旅遊足跡">
-      {stops.map(({ month, cities }) => <li key={month} style={{ flexGrow: cities.length }}>
+    {stops.length ? <ol key={year + play} className="travel-trail" aria-label="按照片月份排列的旅遊足跡">
+      {stops.map(({ month, cities }, i) => <li key={month} style={{ flexGrow: cities.length, animationDelay: (180 + i * 90) + 'ms' }}>
         <div>{cities.map(({ place }) => <City key={place.slug} place={place} />)}</div>
         <time dateTime={year + '-' + String(month).padStart(2, '0')}>{month}月</time>
       </li>)}
