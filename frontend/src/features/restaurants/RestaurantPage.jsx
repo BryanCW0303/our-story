@@ -67,7 +67,7 @@ export default function RestaurantPage({ place, restaurant, authed, onChanged, o
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               maxLength={NOTE_MAX}
-              placeholder="寫下關於這筆餐飲紀錄的話…"
+              placeholder="寫下關於這間店的話…"
               aria-label="留言"
             />
           ) : restaurant.note ? (
@@ -138,7 +138,7 @@ export default function RestaurantPage({ place, restaurant, authed, onChanged, o
         />
       )}
       {dialog === 'delete' && (
-        <Modal title="刪除這筆餐飲紀錄？" onClose={() => setDialog(null)} locked={busy}>
+        <Modal title="刪除這間店？" onClose={() => setDialog(null)} locked={busy}>
           <p className="muted">餐飲的資料和留言會一起刪除，刪除後無法復原。</p>
           <div className="form-actions">
             <button className="btn ghost" onClick={() => setDialog(null)} disabled={busy}>

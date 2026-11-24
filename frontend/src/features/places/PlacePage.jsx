@@ -19,7 +19,7 @@ export default function PlacePage({ place, tab, photos, restaurants, authed, foc
         <div>
           <h1>{place.name}</h1>
           <p>
-            {kindName} · {place.photo_count} 張照片 · {place.restaurant_count} 筆喜歡的餐飲
+            {kindName} · {place.photo_count} 張照片 · {place.restaurant_count} 間喜歡的餐飲
           </p>
         </div>
         {authed && (

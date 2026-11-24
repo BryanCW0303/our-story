@@ -38,7 +38,7 @@ export default function PlaceRoute({ place, route, focusId, replacePhoto, onChan
     if (!restaurants) {
       page = <p className="muted center pad">載入中…</p>
     } else if (!restaurant) {
-      page = <Missing text="找不到這筆餐飲紀錄，可能已經刪除。" href={`#/p/${slug}/food`} label={`回到${place.name}`} />
+      page = <Missing text="找不到這間店，可能已經刪除。" href={`#/p/${slug}/food`} label={`回到${place.name}`} />
     } else {
       page = (
         <RestaurantPage

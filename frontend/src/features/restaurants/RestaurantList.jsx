@@ -5,7 +5,7 @@ export default function RestaurantList({ place, restaurants, authed }) {
     return (
       <div className="empty">
         <p>這裡還沒有餐飲紀錄。</p>
-        <p className="muted">{authed ? '按「新增餐飲」記下第一筆。' : '登入後就可以新增。'}</p>
+        <p className="muted">{authed ? '按「新增餐飲」記下第一間。' : '登入後就可以新增。'}</p>
       </div>
     )
   }

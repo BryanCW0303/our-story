@@ -54,7 +54,7 @@ function Footprints({ places }) {
           <Icon name="heart" />
           <div className="stat">
             <strong>{places.reduce((sum, place) => sum + place.restaurant_count, 0).toLocaleString()}</strong>
-            <span>筆餐飲</span>
+            <span>間餐飲</span>
           </div>
           <Icon name="heart" />
           <div className="stat">
