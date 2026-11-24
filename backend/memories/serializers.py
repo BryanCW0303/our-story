@@ -65,7 +65,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Restaurant
-        fields = ["id", "name", "location", "must_order", "note", "note_by"]
+        fields = ["id", "name", "must_order", "note", "note_by"]
 
     def get_note_by(self, restaurant):
         return display_name(restaurant.note_by) if restaurant.note else ""

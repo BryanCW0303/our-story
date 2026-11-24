@@ -6,7 +6,6 @@ import Modal from './Modal.jsx'
 export default function RestaurantForm({ place, restaurant, onClose, onSaved }) {
   const [form, setForm] = useState({
     name: restaurant?.name ?? '',
-    location: restaurant?.location ?? '',
     must_order: restaurant?.must_order ?? '',
   })
   const [busy, setBusy] = useState(false)
@@ -37,15 +36,6 @@ export default function RestaurantForm({ place, restaurant, onClose, onSaved }) 
         <label>
           餐廳名
           <input value={form.name} onChange={set('name')} maxLength={60} placeholder="例如：巷口拉麵" />
-        </label>
-        <label>
-          位置
-          <input
-            value={form.location}
-            onChange={set('location')}
-            maxLength={120}
-            placeholder="地址，或「車站旁邊」這樣的描述"
-          />
         </label>
         <label>
           必點

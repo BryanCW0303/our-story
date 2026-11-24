@@ -86,7 +86,6 @@ function Restaurants({ place, restaurants, authed }) {
         <li key={restaurant.id}>
           <a href={`#/p/${place.slug}/food/${restaurant.id}`}>
             <strong>{restaurant.name}</strong>
-            <span>{restaurant.location && <>位置 · {restaurant.location}</>}</span>
             <span>{restaurant.must_order && <>必點 · {restaurant.must_order}</>}</span>
           </a>
         </li>

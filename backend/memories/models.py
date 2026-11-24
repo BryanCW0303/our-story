@@ -137,7 +137,6 @@ class Restaurant(models.Model):
     place = models.ForeignKey(Place, on_delete=models.PROTECT, related_name="restaurants", verbose_name="地點")
     name = models.CharField("餐廳名", max_length=60)
     cuisine = models.CharField("種類", max_length=30, blank=True)
-    location = models.CharField("位置", max_length=120, blank=True)
     must_order = models.CharField("必點", max_length=120, blank=True)
     image = models.ImageField(upload_to=_restaurant_path, blank=True)
     thumb = models.ImageField(upload_to=_restaurant_path, blank=True)

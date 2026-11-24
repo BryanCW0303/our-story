@@ -16,9 +16,8 @@ export default function RestaurantPage({ place, restaurant, authed, onChanged, o
     if (editing) field.current?.focus()
   }, [editing])
 
-  // The search is made of what we know: the name, where it is, and the city.
   const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    [restaurant.name, restaurant.location, place.name].filter(Boolean).join(' '),
+    [restaurant.name, place.name].filter(Boolean).join(' '),
   )}`
 
   async function saveNote() {
@@ -80,25 +79,17 @@ export default function RestaurantPage({ place, restaurant, authed, onChanged, o
           )}
         </div>
 
-        {(restaurant.location || restaurant.must_order) && (
-          <ul className="facts">
-            {restaurant.location && (
-              <li>
-                <Icon name="pin" />
-                {restaurant.location}
-                <a href={mapUrl} target="_blank" rel="noopener noreferrer">
-                  在地圖上看
-                </a>
-              </li>
-            )}
-            {restaurant.must_order && (
-              <li>
-                <Icon name="star" />
-                必點：{restaurant.must_order}
-              </li>
-            )}
-          </ul>
-        )}
+        <ul className="facts">
+          {restaurant.must_order && (
+            <li>
+              <Icon name="star" /> 必點：{restaurant.must_order}
+            </li>
+          )}
+          <li>
+            <Icon name="pin" />
+            <a href={mapUrl} target="_blank" rel="noopener noreferrer">在地圖上看</a>
+          </li>
+        </ul>
 
         {error && (
           <p className="notice error" role="alert">

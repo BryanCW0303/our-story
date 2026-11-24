@@ -216,7 +216,7 @@ class ApiTests(TestCase):
         plain = self.member.post("/api/places/tokyo/restaurants/", body, format="multipart")
         self.assertEqual(plain.status_code, 201)
         self.assertEqual(plain.json()["name"], "巷口拉麵")
-        self.assertEqual(set(plain.json()), {"id", "name", "location", "must_order", "note", "note_by"})
+        self.assertEqual(set(plain.json()), {"id", "name", "must_order", "note", "note_by"})
         record = Restaurant.objects.get(pk=plain.json()["id"])
         self.assertEqual(record.cuisine, "")
         second = {"name": "海邊小館", "note": "看著海吃飯"}

@@ -25,9 +25,9 @@ class PhotoAdmin(admin.ModelAdmin):
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ["name", "place", "location", "added_by"]
+    list_display = ["name", "place", "added_by"]
     list_filter = ["place"]
-    search_fields = ["name", "location", "must_order", "note"]
+    search_fields = ["name", "must_order", "note"]
     exclude = ["image", "thumb", "cuisine"]
     readonly_fields = ["added_by", "created_at"]
 
