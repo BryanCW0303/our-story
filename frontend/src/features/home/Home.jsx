@@ -39,8 +39,7 @@ function Footprints({ places }) {
       <div className="divider">
         <Icon name="route" />
       </div>
-      <h2 className="sec">我們的足跡</h2>
-      <p className="sub">年度回顧</p>
+      <h2 className="sec">年度回顧</h2>
       <section className="trail-card">
         <div className="stats">
           <div className="stat">
@@ -124,8 +123,7 @@ export default function Home({ config, places, authed, onConfigSaved, onOpenSett
       <div className="divider">
         <Icon name="pin" />
       </div>
-      <h2 className="sec">我們去過的地方</h2>
-      <p className="sub">世界足跡</p>
+      <h2 className="sec">世界足跡</h2>
       {places &&
         KINDS.map((group) => (
           <section key={group.kind}>
@@ -151,8 +149,7 @@ export default function Home({ config, places, authed, onConfigSaved, onOpenSett
       <div className="divider">
         <Icon name="sparkles" />
       </div>
-      <h2 className="sec">我們一起做過的事</h2>
-      <p className="sub">兩人活動</p>
+      <h2 className="sec">兩人活動</h2>
       <div className="places">
         {ACTIVITIES.map((activity) => (
           <a className="place" href={`#/a/${activity.id}`} key={activity.id}>
