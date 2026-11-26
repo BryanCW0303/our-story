@@ -13,6 +13,8 @@ NOTE_MAX = 500  # characters in the note written next to a photo
 class SiteConfig(models.Model):
     """Single row holding the couple's names and the day it all started."""
 
+    reunion_date = models.DateField("見面日期", null=True, blank=True)
+    reunion_city = models.CharField("見面地點", max_length=60, blank=True)
     title = models.CharField("網站標題", max_length=60, default="memories")
     name_a = models.CharField("名字 A", max_length=30, blank=True)
     name_b = models.CharField("名字 B", max_length=30, blank=True)

@@ -3,7 +3,7 @@ import { api } from '../../api.js'
 import Modal from '../../components/Modal.jsx'
 
 export default function SettingsForm({ config, onClose, onSaved }) {
-  const [form, setForm] = useState({ ...config, start_date: config.start_date ?? '' })
+  const [form, setForm] = useState({ title: config.title, name_a: config.name_a, name_b: config.name_b, start_date: config.start_date ?? '' })
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 

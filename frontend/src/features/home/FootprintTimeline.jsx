@@ -1,5 +1,5 @@
-import { Fragment, useEffect, useRef, useState } from 'react'
-import { Badge } from '../../components/Landmark.jsx'
+import { useEffect, useRef, useState } from 'react'
+import City from './TimelineCity.jsx'
 import './FootprintTimeline.css'
 
 const months = Array.from({ length: 12 }, (_, i) => i + 1)
@@ -16,12 +16,6 @@ function timelineMonths(place, today) {
     marked.push(year + '-' + month)
   }
   return marked
-}
-
-function City({ place, english = false }) {
-  return <a className="timeline-city" href={'#/p/' + place.slug}>
-    <Badge place={place} /><strong>{place.name}</strong>{english && <small>{place.name_en}</small>}
-  </a>
 }
 
 export default function FootprintTimeline({ places }) {
@@ -42,7 +36,6 @@ export default function FootprintTimeline({ places }) {
   const entries = places.map((place) => ({ place, marked: timelineMonths(place, today) }))
   const years = [...new Set(entries.flatMap(({ marked }) => marked).map((date) => date.slice(0, 4)))].sort().reverse()
   const year = years.includes(selection) ? selection : years[0]
-  const homes = places.filter((place) => place.kind === 'now')
   const rows = entries.map(({ place, marked }) => ({
     place,
     recorded: marked.filter((date) => date.slice(0, 4) === year).map((date) => Number(date.slice(5))),
@@ -55,13 +48,6 @@ export default function FootprintTimeline({ places }) {
 
   return <section ref={timeline} className={'footprint-timeline' + (play ? ' playing' : '')}>
     <button type="button" className="replay-motion" onClick={() => setPlay(n => n + 1)}>↻ 重播動態</button>
-    {homes.length > 0 && <>
-      <h3>{homes.length === 2 ? '我們現在分住兩地' : '我們的現居地'}</h3>
-      <div className="home-pair" key={play}>{homes.map((place, i) => <Fragment key={place.slug}>
-        {i > 0 && <span className="home-bridge" aria-hidden="true"><b>♡</b></span>}
-        <City place={place} english />
-      </Fragment>)}</div>
-    </>}
     <div className="timeline-heading"><h4>年度足跡</h4>
       {year && <select aria-label="足跡年份" value={year} onChange={(e) => setSelection(e.target.value)}>
         {years.map((y) => <option key={y}>{y}</option>)}

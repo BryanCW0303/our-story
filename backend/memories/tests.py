@@ -46,6 +46,17 @@ class ApiTests(TestCase):
     def _photo(self, taken_on, **extra):
         return Photo.from_upload(self.tokyo, _jpeg_upload(size=(400, 300)), fallback_date=taken_on, **extra)
 
+    def test_reunion_settings_are_shared_and_survive_site_edits(self):
+        url = "/api/config/"
+        self.assertIsNone(self.member.get(url).json()["reunion_date"])
+        reunion = {"reunion_date": "2027-04-01", "reunion_city": "東京"}
+        self.assertEqual(self.member.patch(url, reunion, format="json").status_code, 200)
+        self.member.force_authenticate(get_user_model().objects.create_user("other-member"))
+        data = self.member.put(url, {"title": "memories"}, format="json").json()
+        self.assertEqual({k: data[k] for k in reunion}, reunion)
+        self.assertEqual(self.member.patch(url, {"reunion_city": "京都"}, format="json").status_code, 400)
+        self.assertEqual(self.anon.patch(url, reunion, format="json").status_code, 403)
+
     def test_anniversary_only_claims_matching_photos_once_per_user(self):
         url = "/api/anniversary/"
         day = {"local_day": "2027-07-02"}

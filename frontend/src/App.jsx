@@ -51,7 +51,7 @@ export default function App({ onLoggedOut }) {
   if (route.activity) {
     page = activity ? <ActivityPage activity={activity} /> : <Missing text="找不到這一頁。" href="#/" label="回到首頁" />
   } else if (!route.slug) {
-    page = <Home config={config} places={places} authed onOpenSettings={() => setSettingsOpen(true)} />
+    page = <Home onConfigSaved={setConfig} config={config} places={places} authed onOpenSettings={() => setSettingsOpen(true)} />
   } else if (!places) {
     page = <p className="muted center pad">載入中…</p>
   } else if (!place) {

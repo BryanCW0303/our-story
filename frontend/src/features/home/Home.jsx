@@ -1,6 +1,7 @@
 import { KINDS } from '../places/kinds.js'
 import { ACTIVITIES } from '../activities/catalog.js'
 import { parseDate } from '../../dates.js'
+import Reunion from './Reunion.jsx'
 import FootprintTimeline from './FootprintTimeline.jsx'
 import Icon from '../../components/Icon.jsx'
 import { Badge } from '../../components/Landmark.jsx'
@@ -84,7 +85,7 @@ function Footprints({ places }) {
   )
 }
 
-export default function Home({ config, places, authed, onOpenSettings }) {
+export default function Home({ config, places, authed, onConfigSaved, onOpenSettings }) {
   const hasNames = Boolean(config?.name_a && config?.name_b)
   const days = config?.start_date ? daysTogether(config.start_date) : 0
 
@@ -117,6 +118,7 @@ export default function Home({ config, places, authed, onOpenSettings }) {
         )}
       </header>
 
+      {places && config && <Reunion places={places} config={config} onSaved={onConfigSaved} />}
       {places && <Footprints places={places} />}
 
       <div className="divider">
