@@ -153,3 +153,12 @@ def _remove_files(sender, instance, **kwargs):
     for field in (instance.image, instance.thumb):
         if field:
             field.delete(save=False)
+
+class AnniversaryDisplay(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    local_day = models.DateField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "local_day"], name="one_anniversary_per_member_day")
+        ]

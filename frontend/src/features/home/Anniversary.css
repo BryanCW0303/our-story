@@ -1,0 +1,23 @@
+.anniversary {
+  position: fixed; inset: 0; margin: auto; padding: 0; width: min(790px, calc(100% - 32px));
+  max-height: 92dvh; overflow: auto; border: 1px solid var(--line); border-radius: 10px;
+  background: #faf7f0; color: var(--ink); box-shadow: 0 24px 75px #30271d40;
+}
+.anniversary::backdrop { background: #302c2775; backdrop-filter: blur(3px); }
+.anniversary header, .anniversary footer { display: flex; align-items: center; justify-content: space-between; }
+.anniversary header { padding: 6px 14px 6px 20px; border-bottom: 1px solid var(--line); }
+.anniversary-spread { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
+.anniversary-mount { display: grid; place-items: center; padding: 18px; background: #e8e3d9; }
+.anniversary-mount img { width: 100%; height: clamp(200px, 43dvh, 350px); object-fit: contain; }
+.anniversary section { min-width: 0; padding: clamp(16px, 3vw, 32px); display: flex; flex-direction: column; overflow-wrap: anywhere; }
+.anniversary h2 { font-family: var(--serif); font-size: clamp(28px, 4vw, 42px); margin: 8px 0; }
+.anniversary p { white-space: pre-wrap; }
+.anniversary small, .anniversary time { color: var(--ink-soft); }
+.anniversary footer { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); }
+.anniversary button { min-width: 44px; min-height: 44px; border: 0; background: transparent; color: inherit; }
+.anniversary button:disabled { opacity: .35; }
+@media (max-width: 540px) {
+  .anniversary-spread { grid-template-columns: 1fr; }
+  .anniversary-mount img { height: clamp(145px, 34dvh, 240px); }
+  .anniversary footer { margin-top: 12px; }
+}

@@ -6,6 +6,7 @@ import SettingsForm from './features/settings/SettingsForm.jsx'
 import { ACTIVITIES } from './features/activities/catalog.js'
 import { api } from './api.js'
 import ActivityPage from './features/activities/ActivityPage.jsx'
+import Anniversary from './features/home/Anniversary.jsx'
 import Home from './features/home/Home.jsx'
 import Icon from './components/Icon.jsx'
 
@@ -88,6 +89,8 @@ export default function App({ onLoggedOut }) {
       </header>
 
       {place ? page : <PageFrame key={route.activity ?? 'home'} error={error}>{page}</PageFrame>}
+
+      <Anniversary eligible={!route.slug && !route.activity && !settingsOpen} />
 
       {settingsOpen && config && (
         <SettingsForm

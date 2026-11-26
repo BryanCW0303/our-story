@@ -46,6 +46,26 @@ class ApiTests(TestCase):
     def _photo(self, taken_on, **extra):
         return Photo.from_upload(self.tokyo, _jpeg_upload(size=(400, 300)), fallback_date=taken_on, **extra)
 
+    def test_anniversary_only_claims_matching_photos_once_per_user(self):
+        url = "/api/anniversary/"
+        day = {"local_day": "2027-07-02"}
+        self.assertEqual(self.anon.post(url, day).status_code, 403)
+        self._photo(date(2025, 7, 2))
+        self._photo(date(2026, 7, 3))
+        self.assertEqual(self.member.post(url, day).json(), [])
+        first = self._photo(date(2026, 7, 2), note="Summer")
+        second = self._photo(date(2026, 7, 2))
+        items = self.member.post(url, day).json()
+        self.assertEqual([p["id"] for p in items], [first.id, second.id])
+        self.assertEqual((items[0]["city"], items[0]["note"]), (self.tokyo.name, "Summer"))
+        self.assertEqual(self.member.post(url, day).json(), [])
+        self.member.force_authenticate(get_user_model().objects.create_user("second-member"))
+        self.assertEqual(self.member.post(url, day).json(), items)
+
+    def test_anniversary_skips_unmatched_leap_day(self):
+        self._photo(date(2027, 2, 28))
+        self.assertEqual(self.member.post("/api/anniversary/", {"local_day": "2028-02-29"}).json(), [])
+
     def test_places_are_seeded_by_kind_in_order(self):
         places = self.member.get("/api/places/").json()
         self.assertEqual(

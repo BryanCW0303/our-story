@@ -1,8 +1,9 @@
 from django.urls import path
 
-from . import photos, places, restaurants, session, site
+from . import anniversary, photos, places, restaurants, session, site
 
 urlpatterns = [
+    path("anniversary/", anniversary.AnniversaryView.as_view()),
     path("session/", session.SessionView.as_view()),
     path("login/", session.LoginView.as_view()),
     path("logout/", session.LogoutView.as_view()),
