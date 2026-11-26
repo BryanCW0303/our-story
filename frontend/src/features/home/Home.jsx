@@ -40,7 +40,7 @@ function Footprints({ places }) {
         <Icon name="route" />
       </div>
       <h2 className="sec">我們的足跡</h2>
-      <p className="sub">一起走過的每一步</p>
+      <p className="sub">年度回顧</p>
       <section className="trail-card">
         <div className="stats">
           <div className="stat">
@@ -125,7 +125,7 @@ export default function Home({ config, places, authed, onConfigSaved, onOpenSett
         <Icon name="pin" />
       </div>
       <h2 className="sec">我們去過的地方</h2>
-      <p className="sub">點一個地方，看看那裡的我們</p>
+      <p className="sub">世界足跡</p>
       {places &&
         KINDS.map((group) => (
           <section key={group.kind}>
@@ -152,7 +152,7 @@ export default function Home({ config, places, authed, onConfigSaved, onOpenSett
         <Icon name="sparkles" />
       </div>
       <h2 className="sec">我們一起做過的事</h2>
-      <p className="sub">看過的、拼過的、玩過的</p>
+      <p className="sub">兩人活動</p>
       <div className="places">
         {ACTIVITIES.map((activity) => (
           <a className="place" href={`#/a/${activity.id}`} key={activity.id}>
