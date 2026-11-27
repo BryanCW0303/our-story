@@ -22,9 +22,9 @@
 .timeline-heading select { padding: 5px 10px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); font: inherit; color: inherit; }
 .residence-months { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 6px; font-size: 12px; text-align: center; }
 .residence-months th { padding: 2px 0; font-weight: normal; }
-.residence-months th:first-child { width: clamp(70px, 18%, 135px); text-align: left; }
-.residence-months .timeline-city { display: flex; align-items: center; gap: 4px; }
-.residence-months .badge { width: clamp(20px, 4vw, 28px); height: auto; aspect-ratio: 1; }
+.residence-months th:first-child { width: 8em; text-align: left; }
+.residence-months .timeline-city { display: flex; align-items: center; gap: .5em; white-space: nowrap; }
+.residence-months .badge { flex: none; width: 2.3em; height: 2.3em; }
 .residence-months td { background: linear-gradient(var(--line), var(--line)) center / 1px 75% no-repeat; }
 .residence-months i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: #618672; }
 .footprint-timeline .journey-heading { margin-top: 18px; }
