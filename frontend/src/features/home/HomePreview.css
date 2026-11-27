@@ -1,0 +1,82 @@
+.design-picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  margin: 18px auto 26px;
+  font: 0.875rem var(--sans);
+}
+.design-picker a { padding: 8px 12px; border-radius: 6px; }
+.design-picker a:hover { text-decoration: underline; }
+.design-picker a[aria-current] { background: #423e38; color: white; }
+.home-preview .hero { margin-bottom: 36px; }
+.home-preview .sec { margin-bottom: 18px; }
+
+/* A cream envelope with a striped edge and a postmarked date. */
+.home-preview[data-design="letter"] {
+  --accent: #a7453d;
+  --line: #d9c2a2;
+  --card: #fffaf0;
+}
+[data-design="letter"] .hero {
+  padding: clamp(28px, 5vw, 58px) 16px;
+  border: 1px solid var(--line);
+  border-top: 7px solid transparent;
+  background: linear-gradient(#fffaf0, #fffaf0) padding-box,
+    repeating-linear-gradient(130deg, #aa5145 0 14px, #fffaf0 14px 26px, #547576 26px 40px, #fffaf0 40px 52px) border-box;
+  box-shadow: 3px 5px 0 #e7dcca;
+}
+[data-design="letter"] .since {
+  display: inline-block;
+  padding: 4px 14px;
+  border: 3px double currentColor;
+  border-radius: 100px;
+  transform: rotate(-3deg);
+}
+[data-design="letter"] .hero h1 { font-family: var(--hand); }
+[data-design="letter"] .together-summary { background: transparent; border-top: 1px dashed var(--line); border-radius: 0; box-shadow: none; }
+[data-design="letter"] :is(.trail-card, .place, .reunion-panel) { border: 1px solid var(--line); border-radius: 5px; box-shadow: 2px 3px 0 #e7dcca; }
+
+/* A night chart with latitude lines and an illuminated route. */
+.home-preview[data-design="atlas"] { --accent: #226c68; --line: #b9d5ce; --card: #f5fbf8; }
+[data-design="atlas"] .hero {
+  --ink-soft: #d2e7e1;
+  --accent: #99e4d3;
+  color: #f4fcf7;
+  border-radius: 26px;
+  padding: clamp(30px, 6vw, 70px) 16px 20px;
+  background-color: #143b44;
+  background-image: repeating-radial-gradient(ellipse at 100% 0%, transparent 0 41px, #a7ded21c 42px 43px, transparent 44px 72px),
+    linear-gradient(#b2e3dc12 1px, transparent 1px), linear-gradient(90deg, #b2e3dc12 1px, transparent 1px);
+  background-size: auto, 32px 32px, 32px 32px;
+}
+[data-design="atlas"] .hero .together-summary { background: #102e36; border: 1px solid #527775; border-radius: 14px; }
+[data-design="atlas"] .trail-card { padding: clamp(10px, 2vw, 20px); background: #173c44; }
+[data-design="atlas"] .footprint-timeline { background: #f2faf7; }
+[data-design="atlas"] .place { border: 1px solid var(--line); border-radius: 50px 50px 12px 12px; }
+
+/* A magazine masthead and a two-column opening spread. */
+.home-preview[data-design="folio"] { --accent: #9e322a; --line: #cac4b9; --card: #fffdf8; }
+[data-design="folio"] .hero {
+  border-block: 3px double #4a423c;
+  text-align: left;
+  padding: clamp(22px, 4vw, 44px) 0;
+}
+[data-design="folio"] .since { font: bold 0.875rem var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+[data-design="folio"] .hero h1 { margin: 10px 0 20px; }
+[data-design="folio"] .together-summary { width: 100%; text-align: center; border: 1px solid var(--line); border-radius: 0; box-shadow: none; }
+[data-design="folio"] .sec { text-align: left; padding-left: 12px; border-left: 6px solid var(--accent); }
+[data-design="folio"] .divider { display: none; }
+[data-design="folio"] .reunion-panel { margin-bottom: 40px; }
+[data-design="folio"] :is(.reunion-panel, .trail-card, .footprint-timeline, .place) { border: 1px solid var(--line); border-radius: 0; box-shadow: none; }
+[data-design="folio"] .place { border-top: 3px solid #4a423c; }
+@media (min-width: 760px) {
+  [data-design="folio"] .hero { display: grid; grid-template-columns: 1fr 1.2fr; align-content: center; column-gap: 24px; }
+  [data-design="folio"] .since { align-self: end; }
+  [data-design="folio"] .hero h1 { grid-column: 1; align-self: center; }
+  [data-design="folio"] .hero .couple-names { grid-template-columns: auto auto auto; justify-content: start; }
+  [data-design="folio"] .together-summary { grid-column: 2; grid-row: 1 / span 2; }
+  [data-design="folio"] .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  [data-design="folio"] .stats > .icon { display: none; }
+  [data-design="folio"] .stat strong { font-size: clamp(28px, 3vw, 40px); }
+}

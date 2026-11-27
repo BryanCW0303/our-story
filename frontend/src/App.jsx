@@ -8,6 +8,7 @@ import { api } from './api.js'
 import ActivityPage from './features/activities/ActivityPage.jsx'
 import Anniversary from './features/home/Anniversary.jsx'
 import Home from './features/home/Home.jsx'
+import HomePreview from './features/home/HomePreview.jsx'
 import MeetingsPage from './features/home/MeetingsPage.jsx'
 import Icon from './components/Icon.jsx'
 
@@ -64,7 +65,7 @@ export default function App({ onLoggedOut }) {
   } else if (route.activity) {
     page = activity ? <ActivityPage activity={activity} /> : <Missing text="找不到這一頁。" href="#/" label="回到首頁" />
   } else if (!route.slug) {
-    page = <Home onConfigSaved={setConfig} config={config} places={places} meetingDays={meetingDays} authed onOpenSettings={() => setSettingsOpen(true)} />
+    page = <HomePreview><Home onConfigSaved={setConfig} config={config} places={places} meetingDays={meetingDays} authed onOpenSettings={() => setSettingsOpen(true)} /></HomePreview>
   } else if (!places) {
     page = <p className="muted center pad">載入中…</p>
   } else if (!place) {
