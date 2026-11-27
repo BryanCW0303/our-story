@@ -67,12 +67,12 @@ export default function Home({ config, places, authed, onConfigSaved, onOpenSett
     <>
       <header className="hero">
         {config?.start_date && <div className="since">Since {config.start_date.replaceAll('-', '.')}</div>}
-        <h1>
+        <h1 className={hasNames ? 'couple-names' : undefined}>
           {hasNames ? (
             <>
-              {config.name_a}
+              <span>{config.name_a}</span>
               <Icon name="heart" />
-              {config.name_b}
+              <span>{config.name_b}</span>
             </>
           ) : (
             config?.title

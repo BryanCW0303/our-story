@@ -240,11 +240,20 @@ main {
   letter-spacing: 0.06em;
 }
 
-.hero h1 .icon {
+.couple-names {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.21em;
+  overflow-wrap: anywhere;
+}
+
+.couple-names span:first-child { text-align: right; }
+.couple-names span:last-child { text-align: left; }
+
+.couple-names .icon {
   color: var(--accent);
   font-size: 0.6em;
-  margin: 0 0.35em;
-  vertical-align: 0.02em;
 }
 
 .together-summary {
