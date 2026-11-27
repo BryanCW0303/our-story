@@ -52,7 +52,7 @@ export default function FootprintTimeline({ places }) {
         {years.map((y) => <option key={y}>{y}</option>)}
       </select>}
     </div>
-    <h5>居住地</h5>
+    <h4>居住地</h4>
     {residences.length ? <table key={year} className="residence-months" aria-label={year + ' 年居住地月份'}>
       <thead><tr><th scope="col">月份</th>{months.map((m) => <th scope="col" key={m}>{m}</th>)}</tr></thead>
       <tbody>{residences.map(({ place, recorded }) => <tr key={place.slug}>
