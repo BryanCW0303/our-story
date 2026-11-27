@@ -1,5 +1,4 @@
 .footprint-timeline {
-  margin-top: 24px;
   padding: clamp(12px, 3vw, 30px);
   background: #fffaf3;
   border: 1px solid var(--line);
