@@ -30,57 +30,32 @@ function placeSpan(place) {
   return from === to ? from : `${from} – ${to}`
 }
 
-function Footprints({ places }) {
+function HomeStats({ places }) {
   const withPhotos = places.filter((place) => place.photo_count > 0)
   const total = places.reduce((sum, place) => sum + place.photo_count, 0)
 
   return (
-    <>
-      <div className="divider">
-        <Icon name="route" />
+    <div className="stats">
+      <div className="stat">
+        <strong>{new Set(withPhotos.map((place) => place.name)).size}</strong>
+        <span>個地方</span>
       </div>
-      <h2 className="sec">年度回顧</h2>
-      <section className="trail-card">
-        <div className="stats">
-          <div className="stat">
-            <strong>{new Set(withPhotos.map((place) => place.name)).size}</strong>
-            <span>個地方</span>
-          </div>
-          <Icon name="heart" />
-          <div className="stat">
-            <strong>{total.toLocaleString()}</strong>
-            <span>張照片</span>
-          </div>
-          <Icon name="heart" />
-          <div className="stat">
-            <strong>{places.reduce((sum, place) => sum + place.restaurant_count, 0).toLocaleString()}</strong>
-            <span>間餐飲</span>
-          </div>
-          <Icon name="heart" />
-          <div className="stat">
-            <strong>{ACTIVITIES.reduce((sum, activity) => sum + activity.items.length, 0)}</strong>
-            <span>項活動</span>
-          </div>
-        </div>
-        <p className="kinds">
-          {KINDS.map((group) => (
-            <span key={group.kind}>
-              <Icon name={group.icon} />
-              {group.short} {withPhotos.filter((place) => place.kind === group.kind).length}
-            </span>
-          ))}
-        </p>
-        <p className="kinds acts">
-          {ACTIVITIES.map((activity) => (
-            <span key={activity.id}>
-              <Icon name={activity.chip} />
-              {activity.name} {activity.items.length}
-            </span>
-          ))}
-        </p>
-        <FootprintTimeline places={places} />
-      </section>
-    </>
+      <Icon name="heart" />
+      <div className="stat">
+        <strong>{total.toLocaleString()}</strong>
+        <span>張照片</span>
+      </div>
+      <Icon name="heart" />
+      <div className="stat">
+        <strong>{places.reduce((sum, place) => sum + place.restaurant_count, 0).toLocaleString()}</strong>
+        <span>間餐飲</span>
+      </div>
+      <Icon name="heart" />
+      <div className="stat">
+        <strong>{ACTIVITIES.reduce((sum, activity) => sum + activity.items.length, 0)}</strong>
+        <span>項活動</span>
+      </div>
+    </div>
   )
 }
 
@@ -103,10 +78,15 @@ export default function Home({ config, places, authed, onConfigSaved, onOpenSett
             config?.title
           )}
         </h1>
-        {config?.start_date && (
-          <p className="days">
-            我們已經在一起 <strong>{days.toLocaleString()}</strong> 天
-          </p>
+        {(config?.start_date || places) && (
+          <div className="together-summary">
+            {config?.start_date && (
+              <p className="days">
+                我們已經在一起 <strong>{days.toLocaleString()}</strong> 天
+              </p>
+            )}
+            {places && <HomeStats places={places} />}
+          </div>
         )}
         {authed && config && !(hasNames && config.start_date) && (
           <p>
@@ -118,7 +98,17 @@ export default function Home({ config, places, authed, onConfigSaved, onOpenSett
       </header>
 
       {places && config && <Reunion places={places} config={config} onSaved={onConfigSaved} />}
-      {places && <Footprints places={places} />}
+      {places && (
+        <>
+          <div className="divider">
+            <Icon name="route" />
+          </div>
+          <h2 className="sec">年度回顧</h2>
+          <section className="trail-card">
+            <FootprintTimeline places={places} />
+          </section>
+        </>
+      )}
 
       <div className="divider">
         <Icon name="pin" />

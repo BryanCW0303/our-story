@@ -247,14 +247,22 @@ main {
   vertical-align: 0.02em;
 }
 
-.days {
-  display: inline-block;
-  margin: 0;
-  padding: 10px 26px;
-  border-radius: 999px;
+.together-summary {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 24px clamp(12px, 4vw, 30px);
+  border-radius: 28px;
   background: var(--card);
   box-shadow: 0 6px 22px rgba(var(--shadow), 0.08);
+}
+
+.days {
+  margin: 0;
   color: var(--ink-soft);
+}
+
+.days + .stats {
+  margin-top: 24px;
 }
 
 .days strong {
@@ -349,36 +357,6 @@ main {
 .stats > .icon {
   font-size: 24px;
   color: var(--line);
-}
-
-.kinds {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px 12px;
-  margin: 22px 0 0;
-}
-
-/* 活動的標籤用淡一點的底色，和上一排的地點分類區分 */
-.kinds.acts {
-  margin-top: 10px;
-}
-
-.kinds.acts span {
-  background: #f3ecdf;
-  color: var(--ink-soft);
-}
-
-.kinds span {
-  padding: 5px 16px;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-size: 14px;
-}
-
-.kinds .icon {
-  margin-right: 6px;
 }
 
 /* 路線：按第一次去的先後排，虛線從徽章後面穿過 */
