@@ -9,7 +9,6 @@
 .footprint-timeline h3, .footprint-timeline h4 { margin: 0; font-family: var(--serif); }
 .footprint-timeline h3 { text-align: center; font-size: clamp(21px, 4vw, 26px); }
 .footprint-timeline h4 { font-size: 20px; }
-.timeline-heading + h4 { margin-top: 14px; }
 .footprint-timeline p { margin: 10px 0 0; color: var(--ink-soft); font-size: 13px; }
 .home-pair { display: flex; align-items: flex-start; justify-content: center; max-width: 510px; margin: 18px auto 24px; }
 .timeline-city { display: grid; justify-items: center; align-content: start; color: inherit; text-decoration: none; }
@@ -20,7 +19,7 @@
 .home-bridge { display: flex; align-items: center; gap: 7px; flex: 1; margin-top: clamp(20px, 5vw, 32px); color: var(--accent); font-size: 24px; }
 .home-bridge::before, .home-bridge::after { content: ''; flex: 1; border-top: 1px dashed #d3a08b; }
 .journey-heading { border-top: 1px dashed var(--line); padding-top: 16px; }
-.timeline-heading { display: flex; justify-content: flex-end; }
+.timeline-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .timeline-heading select { padding: 5px 10px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); font: inherit; color: inherit; }
 .residence-months { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 6px; font-size: 12px; text-align: center; }
 .residence-months th { padding: 2px 0; font-weight: normal; }

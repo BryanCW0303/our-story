@@ -48,11 +48,11 @@ export default function FootprintTimeline({ places }) {
 
   return <section ref={timeline} className={'footprint-timeline' + (isVisible ? ' playing' : '')}>
     <div className="timeline-heading">
+      <h4>居住地</h4>
       {year && <select aria-label="足跡年份" value={year} onChange={(e) => setSelection(e.target.value)}>
         {years.map((y) => <option key={y}>{y}</option>)}
       </select>}
     </div>
-    <h4>居住地</h4>
     {residences.length ? <table key={year} className="residence-months" aria-label={year + ' 年居住地月份'}>
       <thead><tr><th scope="col">月份</th>{months.map((m) => <th scope="col" key={m}>{m}</th>)}</tr></thead>
       <tbody>{residences.map(({ place, recorded }) => <tr key={place.slug}>
