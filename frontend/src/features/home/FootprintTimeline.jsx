@@ -4,7 +4,14 @@ import './FootprintTimeline.css'
 
 const months = Array.from({ length: 12 }, (_, i) => i + 1)
 function timelineMonths(place, today) {
-  if (place.kind !== 'now') return place.photo_months ?? place.trip_months ?? []
+  if (place.kind !== 'now') {
+    const photographed = place.photo_months ?? place.trip_months ?? []
+    if (place.kind === 'past' && place.slug === 'seattle') {
+      // Seattle was a residence throughout 2025, including months without photos.
+      return [...new Set([...photographed, ...months.map(m => '2025-' + String(m).padStart(2, '0'))])]
+    }
+    return photographed
+  }
   if (!place.first_photo) return []
 
   const [firstYear, firstMonth] = place.first_photo.split('-').map(Number)
@@ -53,17 +60,17 @@ export default function FootprintTimeline({ places }) {
         {years.map((y) => <option key={y}>{y}</option>)}
       </select>}
     </div>
-    {residences.length ? <table key={year} className="residence-months" aria-label={year + ' 年居住地月份'}>
+    {residences.length ? <table key={'residences-' + year} className="residence-months" aria-label={year + ' 年居住地月份'}>
       <thead><tr><th scope="col">月份</th>{months.map((m) => <th scope="col" key={m}>{m}</th>)}</tr></thead>
       <tbody>{residences.map(({ place, recorded }) => <tr key={place.slug}>
         <th scope="row"><City place={place} /></th>
-        {months.map((m) => <td key={m} aria-label={recorded.includes(m) ? (place.kind === 'now' ? '居住中' : '有照片') : '無標記'}>
+        {months.map((m) => <td key={m} aria-label={recorded.includes(m) ? (place.kind === 'now' ? '居住中' : '曾居住') : '無標記'}>
           {recorded.includes(m) && <i aria-hidden="true" style={{ animationDelay: (m * 45) + 'ms' }} />}
         </td>)}
       </tr>)}</tbody>
     </table> : <p>尚無居住地照片。</p>}
     <h4 className="journey-heading">旅遊地</h4>
-    {stops.length ? <ol key={year} className="travel-trail" aria-label="按照片月份排列的旅遊足跡">
+    {stops.length ? <ol key={'trips-' + year} className="travel-trail" aria-label="按照片月份排列的旅遊足跡">
       {stops.map(({ month, cities }, i) => <li key={month} style={{ flexGrow: cities.length, animationDelay: (180 + i * 90) + 'ms' }}>
         <div>{cities.map(({ place }) => <City key={place.slug} place={place} />)}</div>
         <time dateTime={year + '-' + String(month).padStart(2, '0')}>{month}月</time>
