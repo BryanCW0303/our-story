@@ -1,11 +1,13 @@
 import { Fragment, useEffect, useState } from 'react'
 import { api } from '../../api.js'
 import { todayString } from '../../dates.js'
+import { cityClock } from './cityClock.js'
 import City from './TimelineCity.jsx'
 import './Reunion.css'
 
 export default function Reunion({ places, config, onSaved }) {
-  const [today, setToday] = useState(todayString)
+  const [now, setNow] = useState(() => new Date())
+  const today = todayString()
   const [draft, setDraft] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -19,11 +21,9 @@ export default function Reunion({ places, config, onSaved }) {
     let timer
     function refresh() {
       clearTimeout(timer)
-      setToday(todayString())
-      const now = new Date()
-      const midnight = new Date(now)
-      midnight.setHours(24, 0, 0, 0)
-      timer = setTimeout(refresh, midnight - now)
+      const current = new Date()
+      setNow(current)
+      timer = setTimeout(refresh, 60000 - current.getTime() % 60000)
     }
     refresh()
     document.addEventListener('visibilitychange', refresh)
@@ -51,10 +51,20 @@ export default function Reunion({ places, config, onSaved }) {
   const upcoming = days !== null && days >= 0
   return <section className="reunion-panel" aria-labelledby="reunion-heading">
     <h2 id="reunion-heading">異國戀中</h2>
-    <div className="home-pair">{homes.map((place, i) => <Fragment key={place.slug}>
-      {i > 0 && <span className="home-bridge" aria-hidden="true"><b>♡</b></span>}
-      <City place={place} english />
-    </Fragment>)}</div>
+    <div className="home-pair">{homes.map((place, i) => {
+      const clock = cityClock(place.slug, now)
+      return <Fragment key={place.slug}>
+        {i > 0 && <span className="home-bridge" aria-hidden="true"><b>♡</b></span>}
+        <div className={'home-city home-city-' + place.slug}>
+          <City place={place} english />
+          {clock && <div className="city-clock" role="group" aria-label={place.name + '當地時間'}>
+            <span className="clock-phase" data-daylight={clock.daylight}>{clock.daylight ? '☀ 白天' : '☾ 夜晚'}</span>
+            <time dateTime={now.toISOString()}>{clock.time}</time>
+            <small>{clock.date}</small>
+          </div>}
+        </div>
+      </Fragment>
+    })}</div>
     <div className="reunion-entry">
       {upcoming && <time className="reunion-calendar" dateTime={date} aria-label={date}>
         <small>{Number(date.slice(5,7))} 月</small><strong>{date.slice(8)}</strong>

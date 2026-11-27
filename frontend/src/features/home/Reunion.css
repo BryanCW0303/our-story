@@ -8,3 +8,19 @@
 .reunion-calendar small { display: block; background: #9e5544; color: white; }
 .reunion-calendar strong { display: block; font: 30px/1.5 var(--serif); }
 .reunion-form { margin-top: 18px; }
+
+.reunion-panel .home-pair { --disc: clamp(44px, 11vw, 98px); max-width: 850px; gap: clamp(2px, 1.5vw, 22px); }
+.home-city { display: flex; align-items: flex-start; gap: clamp(3px, 2vw, 28px); }
+.home-city-vancouver { flex-direction: row-reverse; }
+.reunion-panel .home-city .badge { width: var(--disc); }
+.reunion-panel .home-bridge { margin-top: 0; height: var(--disc); justify-content: center; }
+.city-clock { height: var(--disc); display: grid; align-content: center; justify-items: center; white-space: nowrap; }
+.city-clock time { font: clamp(20px, 3.8vw, 40px)/1.2 var(--serif); font-variant-numeric: tabular-nums; }
+.clock-phase { padding: 0 7px; border-radius: 20px; font-size: 12px; color: #535879; background: #eeedf7; }
+.clock-phase[data-daylight="true"] { color: #885719; background: #fff0ce; }
+@media (max-width: 480px) {
+  .reunion-panel .home-pair small { font-size: 10px; }
+  .reunion-panel .home-bridge { gap: 0; font-size: 18px; }
+  .reunion-panel .timeline-city { font-size: 16px; }
+  .clock-phase { font-size: 10px; }
+}
