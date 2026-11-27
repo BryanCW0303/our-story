@@ -8,7 +8,7 @@ const designs = [
 
 export default function HomePreview({ children }) {
   const selected = new URLSearchParams(window.location.search).get('design')
-  if (!designs.some(([id]) => id === selected)) return children
+  const isPreview = designs.some(([id]) => id === selected)
 
   function designUrl(id) {
     const url = new URL(window.location.href)
@@ -17,11 +17,11 @@ export default function HomePreview({ children }) {
     return url.href
   }
 
-  return <div className="home-preview" data-design={selected}>
-    <nav className="design-picker" aria-label="首頁樣板">
+  return <div className="home-preview" data-design={isPreview ? selected : 'letter'}>
+    {isPreview && <nav className="design-picker" aria-label="首頁樣板">
       {designs.map(([id, name]) => <a key={id} href={designUrl(id)} aria-current={id === selected ? 'page' : undefined}>{name}</a>)}
-      <a href={designUrl(null)}>原版首頁</a>
-    </nav>
+      <a href={designUrl(null)}>回到首頁</a>
+    </nav>}
     {children}
   </div>
 }
