@@ -6,7 +6,7 @@ from ..models import SiteConfig
 class SiteConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = SiteConfig
-        fields = ["title", "name_a", "name_b", "start_date", "reunion_date", "reunion_city"]
+        fields = ["title", "name_a", "name_b", "start_date", "anniversary_timezone", "reunion_date", "reunion_city"]
 
     def validate(self, attrs):
         if "reunion_date" in attrs or "reunion_city" in attrs:

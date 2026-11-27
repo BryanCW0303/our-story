@@ -1,19 +1,11 @@
+import { useEffect, useState } from 'react'
 import { KINDS } from '../places/kinds.js'
 import { ACTIVITIES } from '../activities/catalog.js'
-import { parseDate } from '../../dates.js'
+import { daysTogether } from '../../dates.js'
 import Reunion from './Reunion.jsx'
 import FootprintTimeline from './FootprintTimeline.jsx'
 import Icon from '../../components/Icon.jsx'
 import { Badge } from '../../components/Landmark.jsx'
-
-const DAY_MS = 24 * 60 * 60 * 1000
-
-function daysTogether(startDate) {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  // Round across daylight-saving shifts so local calendar days stay whole.
-  return Math.max(0, Math.round((today - parseDate(startDate)) / DAY_MS))
-}
 
 const yearMonth = (date) => date.slice(0, 7).replace('-', '.')
 
@@ -58,8 +50,25 @@ function HomeStats({ places }) {
 }
 
 export default function Home({ config, places, meetingDays, authed, onConfigSaved, onOpenSettings }) {
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    let timer
+    function refresh() {
+      clearTimeout(timer)
+      const current = new Date()
+      setNow(current)
+      timer = setTimeout(refresh, 60000 - current.getTime() % 60000)
+    }
+    refresh()
+    document.addEventListener('visibilitychange', refresh)
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('visibilitychange', refresh)
+    }
+  }, [])
+
   const hasNames = Boolean(config?.name_a && config?.name_b)
-  const days = config?.start_date ? daysTogether(config.start_date) : 0
+  const days = config?.start_date ? daysTogether(config.start_date, config.anniversary_timezone, now) : 0
 
   return (
     <>
@@ -95,7 +104,7 @@ export default function Home({ config, places, meetingDays, authed, onConfigSave
         )}
       </header>
 
-      {places && config && <Reunion places={places} config={config} meetingDays={meetingDays} onSaved={onConfigSaved} />}
+      {places && config && <Reunion now={now} places={places} config={config} meetingDays={meetingDays} onSaved={onConfigSaved} />}
       {places && (
         <>
           <div className="divider">

@@ -46,6 +46,14 @@ class ApiTests(TestCase):
     def _photo(self, taken_on, **extra):
         return Photo.from_upload(self.tokyo, _jpeg_upload(size=(400, 300)), fallback_date=taken_on, **extra)
 
+    def test_shared_anniversary_timezone(self):
+        url = "/api/config/"
+        self.assertEqual(self.member.get(url).json()["anniversary_timezone"], "Asia/Tokyo")
+        self.assertEqual(self.member.put(url, {"anniversary_timezone": "America/Vancouver"}).status_code, 200)
+        self.assertEqual(self.member.patch(url, {"anniversary_timezone": "invalid"}).status_code, 400)
+        self.member.patch(url, {"title": "memories"})
+        self.assertEqual(self.member.get(url).json()["anniversary_timezone"], "America/Vancouver")
+
     def test_shared_meetings_count_both_dates(self):
         url = "/api/meetings/"
         visit = {"start_date": "2028-02-28", "end_date": "2028-03-01", "location": "東京"}

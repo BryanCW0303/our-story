@@ -19,6 +19,10 @@ class SiteConfig(models.Model):
     name_a = models.CharField("名字 A", max_length=30, blank=True)
     name_b = models.CharField("名字 B", max_length=30, blank=True)
     start_date = models.DateField("在一起的日期", null=True, blank=True)
+    anniversary_timezone = models.CharField(
+        "紀念時區", max_length=64, default="Asia/Tokyo",
+        choices=[("Asia/Tokyo", "東京"), ("America/Vancouver", "溫哥華")],
+    )
 
     class Meta:
         verbose_name = verbose_name_plural = "網站設定"

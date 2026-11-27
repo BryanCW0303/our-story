@@ -3,7 +3,10 @@ import { api } from '../../api.js'
 import Modal from '../../components/Modal.jsx'
 
 export default function SettingsForm({ config, onClose, onSaved }) {
-  const [form, setForm] = useState({ title: config.title, name_a: config.name_a, name_b: config.name_b, start_date: config.start_date ?? '' })
+  const [form, setForm] = useState({
+    title: config.title, name_a: config.name_a, name_b: config.name_b,
+    start_date: config.start_date ?? '', anniversary_timezone: config.anniversary_timezone,
+  })
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
@@ -41,6 +44,13 @@ export default function SettingsForm({ config, onClose, onSaved }) {
         <label>
           在一起的日期
           <input type="date" value={form.start_date} onChange={set('start_date')} />
+        </label>
+        <label>
+          紀念時區
+          <select value={form.anniversary_timezone} onChange={set('anniversary_timezone')}>
+            <option value="Asia/Tokyo">東京</option>
+            <option value="America/Vancouver">溫哥華</option>
+          </select>
         </label>
         {error && (
           <p className="notice error" role="alert">

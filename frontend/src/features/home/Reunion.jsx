@@ -1,12 +1,11 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 import { api } from '../../api.js'
 import { todayString } from '../../dates.js'
 import { cityClock } from './cityClock.js'
 import City from './TimelineCity.jsx'
 import './Reunion.css'
 
-export default function Reunion({ places, config, meetingDays, onSaved }) {
-  const [now, setNow] = useState(() => new Date())
+export default function Reunion({ now, places, config, meetingDays, onSaved }) {
   const today = todayString()
   const [draft, setDraft] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -16,22 +15,6 @@ export default function Reunion({ places, config, meetingDays, onSaved }) {
   const city = config.reunion_city
   // ISO dates parsed as UTC midnight give calendar days, including across DST changes.
   const days = date ? (Date.parse(date) - Date.parse(today)) / 86400000 : null
-
-  useEffect(() => {
-    let timer
-    function refresh() {
-      clearTimeout(timer)
-      const current = new Date()
-      setNow(current)
-      timer = setTimeout(refresh, 60000 - current.getTime() % 60000)
-    }
-    refresh()
-    document.addEventListener('visibilitychange', refresh)
-    return () => {
-      clearTimeout(timer)
-      document.removeEventListener('visibilitychange', refresh)
-    }
-  }, [])
 
   async function save(event) {
     event.preventDefault()
