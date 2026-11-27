@@ -62,7 +62,7 @@
   text-align: left;
   padding: clamp(22px, 4vw, 44px) 0;
 }
-[data-design="folio"] .since { font: bold 0.875rem var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+[data-design="folio"] .since { font: bold clamp(1rem, 2vw, 1.125rem) var(--sans); letter-spacing: .16em; text-transform: uppercase; }
 [data-design="folio"] .hero h1 { margin: 10px 0 20px; }
 [data-design="folio"] .together-summary { width: 100%; text-align: center; border: 1px solid var(--line); border-radius: 0; box-shadow: none; }
 [data-design="folio"] .sec { text-align: left; padding-left: 12px; border-left: 6px solid var(--accent); }
