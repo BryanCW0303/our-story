@@ -46,6 +46,18 @@ class ApiTests(TestCase):
     def _photo(self, taken_on, **extra):
         return Photo.from_upload(self.tokyo, _jpeg_upload(size=(400, 300)), fallback_date=taken_on, **extra)
 
+    def test_shared_meetings_count_both_dates(self):
+        url = "/api/meetings/"
+        visit = {"start_date": "2028-02-28", "end_date": "2028-03-01", "location": "東京"}
+        self.assertEqual(self.member.get(url).json(), [])
+        self.assertEqual(self.anon.get(url).status_code, 403)
+        self.assertEqual(self.anon.post(url, visit).status_code, 403)
+        self.assertEqual(self.member.post(url, visit).json()["days"], 3)
+        self.assertEqual(self.member.post(url, {**visit, "start_date": "2028-03-01"}).json()["days"], 1)
+        self.assertEqual(self.member.post(url, {**visit, "end_date": "2028-02-27"}).status_code, 400)
+        self.member.force_authenticate(get_user_model().objects.create_user("other-member"))
+        self.assertEqual(sum(item["days"] for item in self.member.get(url).json()), 4)
+
     def test_reunion_settings_are_shared_and_survive_site_edits(self):
         url = "/api/config/"
         self.assertIsNone(self.member.get(url).json()["reunion_date"])

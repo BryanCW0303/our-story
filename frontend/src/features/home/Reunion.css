@@ -8,6 +8,15 @@
 .reunion-calendar small { display: block; background: #9e5544; color: white; }
 .reunion-calendar strong { display: block; font: 30px/1.5 var(--serif); }
 .reunion-form { margin-top: 18px; }
+.meeting-total { text-align: center; margin: 0 0 22px; }
+.meeting-cities { position: relative; display: flow-root; }
+@media (min-width: 900px) {
+  .meeting-total { position: absolute; top: 86px; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+}
+.meeting-total a { padding: 0 4px; font: bold 1.5em var(--serif); color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+.meetings-page { max-width: 620px; margin: 32px auto; }
+.meeting-history { list-style: none; padding: 0; }
+.meeting-history li { display: grid; gap: 4px; padding: 12px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
 
 .reunion-panel .home-pair { --disc: clamp(44px, 11vw, 98px); max-width: 850px; gap: clamp(2px, 1.5vw, 22px); }
 .home-city { display: flex; align-items: flex-start; gap: clamp(3px, 2vw, 28px); }

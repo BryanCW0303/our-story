@@ -5,7 +5,7 @@ import { cityClock } from './cityClock.js'
 import City from './TimelineCity.jsx'
 import './Reunion.css'
 
-export default function Reunion({ places, config, onSaved }) {
+export default function Reunion({ places, config, meetingDays, onSaved }) {
   const [now, setNow] = useState(() => new Date())
   const today = todayString()
   const [draft, setDraft] = useState(null)
@@ -51,20 +51,23 @@ export default function Reunion({ places, config, onSaved }) {
   const upcoming = days !== null && days >= 0
   return <section className="reunion-panel" aria-labelledby="reunion-heading">
     <h2 id="reunion-heading">異國戀中</h2>
-    <div className="home-pair">{homes.map((place, i) => {
-      const clock = cityClock(place.slug, now)
-      return <Fragment key={place.slug}>
-        {i > 0 && <span className="home-bridge" aria-hidden="true"><b>♡</b></span>}
-        <div className={'home-city home-city-' + place.slug}>
-          <City place={place} english />
-          {clock && <div className="city-clock" role="group" aria-label={place.name + '當地時間'}>
-            <span className="clock-phase" data-daylight={clock.daylight}>{clock.daylight ? '☀ 白天' : '☾ 夜晚'}</span>
-            <time dateTime={now.toISOString()}>{clock.time}</time>
-            <small>{clock.date}</small>
-          </div>}
-        </div>
-      </Fragment>
-    })}</div>
+    <div className="meeting-cities">
+      <div className="home-pair">{homes.map((place, i) => {
+        const clock = cityClock(place.slug, now)
+        return <Fragment key={place.slug}>
+          {i > 0 && <span className="home-bridge" aria-hidden="true"><b>♡</b></span>}
+          <div className={'home-city home-city-' + place.slug}>
+            <City place={place} english />
+            {clock && <div className="city-clock" role="group" aria-label={place.name + '當地時間'}>
+              <span className="clock-phase" data-daylight={clock.daylight}>{clock.daylight ? '☀ 白天' : '☾ 夜晚'}</span>
+              <time dateTime={now.toISOString()}>{clock.time}</time>
+              <small>{clock.date}</small>
+            </div>}
+          </div>
+        </Fragment>
+      })}</div>
+      <p className="meeting-total">異國後，我們總共見了 <a href="#/meetings" aria-label={`查看見面紀錄，共 ${meetingDays ?? '…'} 天`}>{meetingDays ?? '…'}</a> 天</p>
+    </div>
     <div className="reunion-entry">
       {upcoming && <time className="reunion-calendar" dateTime={date} aria-label={date}>
         <small>{Number(date.slice(5,7))} 月</small><strong>{date.slice(8)}</strong>

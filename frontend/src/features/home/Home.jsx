@@ -57,7 +57,7 @@ function HomeStats({ places }) {
   )
 }
 
-export default function Home({ config, places, authed, onConfigSaved, onOpenSettings }) {
+export default function Home({ config, places, meetingDays, authed, onConfigSaved, onOpenSettings }) {
   const hasNames = Boolean(config?.name_a && config?.name_b)
   const days = config?.start_date ? daysTogether(config.start_date) : 0
 
@@ -95,7 +95,7 @@ export default function Home({ config, places, authed, onConfigSaved, onOpenSett
         )}
       </header>
 
-      {places && config && <Reunion places={places} config={config} onSaved={onConfigSaved} />}
+      {places && config && <Reunion places={places} config={config} meetingDays={meetingDays} onSaved={onConfigSaved} />}
       {places && (
         <>
           <div className="divider">

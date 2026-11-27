@@ -35,6 +35,22 @@ class SiteConfig(models.Model):
         return cls.objects.get_or_create(pk=1)[0]
 
 
+class Meeting(models.Model):
+    start_date = models.DateField()
+    end_date = models.DateField()
+    location = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ["-start_date", "-id"]
+        constraints = [
+            models.CheckConstraint(condition=models.Q(end_date__gte=models.F("start_date")), name="meeting_dates_in_order"),
+        ]
+
+    @property
+    def days(self):
+        return (self.end_date - self.start_date).days + 1
+
+
 class Place(models.Model):
     """A city on the home page. The frontend draws its landmark icon from `slug`.
 

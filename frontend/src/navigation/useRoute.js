@@ -12,6 +12,7 @@ function readRoute() {
   const [, slug, food, id] = hash.match(/^#\/p\/([\w-]+)(?:\/(food))?(?:\/(\d+))?$/) ?? []
   const [, activity] = hash.match(/^#\/a\/([\w-]+)$/) ?? []
   return {
+    meetings: hash === '#/meetings',
     slug: slug ?? null,
     tab: food ? 'food' : 'photos',
     photoId: !food && id ? Number(id) : null,
