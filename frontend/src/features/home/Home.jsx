@@ -18,14 +18,12 @@ function daysTogether(startDate) {
 const yearMonth = (date) => date.slice(0, 7).replace('-', '.')
 
 /**
- * Trips list the individual months visited; homes show the span of residence.
- * A current home has no end yet, so it runs to "now".
+ * Trips list the individual months visited; former homes show the span of residence.
  */
 function placeSpan(place) {
   if (!place.first_photo) return '還沒有照片'
   if (place.kind === 'trip') return place.trip_months.map(yearMonth).join('、')
   const from = yearMonth(place.first_photo)
-  if (place.kind === 'now') return `${from} – now`
   const to = yearMonth(place.last_photo)
   return from === to ? from : `${from} – ${to}`
 }
@@ -115,7 +113,7 @@ export default function Home({ config, places, authed, onConfigSaved, onOpenSett
       </div>
       <h2 className="sec">世界足跡</h2>
       {places &&
-        KINDS.map((group) => (
+        KINDS.filter((group) => group.kind !== 'now').map((group) => (
           <section key={group.kind}>
             <h3 className="group">
               <Icon name={group.icon} />
