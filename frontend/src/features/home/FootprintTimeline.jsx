@@ -21,11 +21,11 @@ function timelineMonths(place, today) {
 export default function FootprintTimeline({ places }) {
   const [selection, setSelection] = useState('')
   const timeline = useRef(null)
-  const [play, setPlay] = useState(0)
+  const [isVisible, setIsVisible] = useState(false)
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        setPlay(1)
+        setIsVisible(true)
         observer.disconnect()
       }
     })
@@ -46,15 +46,14 @@ export default function FootprintTimeline({ places }) {
     cities: rows.filter(({ place, recorded }) => place.kind === 'trip' && recorded.includes(month)),
   })).filter(({ cities }) => cities.length)
 
-  return <section ref={timeline} className={'footprint-timeline' + (play ? ' playing' : '')}>
-    <button type="button" className="replay-motion" onClick={() => setPlay(n => n + 1)}>↻ 重播動態</button>
+  return <section ref={timeline} className={'footprint-timeline' + (isVisible ? ' playing' : '')}>
     <div className="timeline-heading"><h4>年度足跡</h4>
       {year && <select aria-label="足跡年份" value={year} onChange={(e) => setSelection(e.target.value)}>
         {years.map((y) => <option key={y}>{y}</option>)}
       </select>}
     </div>
     <h5>居住地</h5>
-    {residences.length ? <><table key={year + play} className="residence-months" aria-label={year + ' 年居住地月份'}>
+    {residences.length ? <><table key={year} className="residence-months" aria-label={year + ' 年居住地月份'}>
       <thead><tr><th scope="col">月份</th>{months.map((m) => <th scope="col" key={m}>{m}</th>)}</tr></thead>
       <tbody>{residences.map(({ place, recorded }) => <tr key={place.slug}>
         <th scope="row"><City place={place} /></th>
@@ -64,7 +63,7 @@ export default function FootprintTimeline({ places }) {
       </tr>)}</tbody>
     </table><p>現居地從第一張照片的月份標到本月；曾居地標示有照片的月份。</p></> : <p>尚無居住地照片。</p>}
     <h4 className="journey-heading">旅遊地</h4>
-    {stops.length ? <ol key={year + play} className="travel-trail" aria-label="按照片月份排列的旅遊足跡">
+    {stops.length ? <ol key={year} className="travel-trail" aria-label="按照片月份排列的旅遊足跡">
       {stops.map(({ month, cities }, i) => <li key={month} style={{ flexGrow: cities.length, animationDelay: (180 + i * 90) + 'ms' }}>
         <div>{cities.map(({ place }) => <City key={place.slug} place={place} />)}</div>
         <time dateTime={year + '-' + String(month).padStart(2, '0')}>{month}月</time>
