@@ -1013,6 +1013,8 @@ section + .divider {
   color: var(--accent);
 }
 
+.rounded-panel { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: clamp(16px, 4vw, 30px); }
+
 .form {
   display: flex;
   flex-direction: column;

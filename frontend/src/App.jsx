@@ -9,14 +9,15 @@ import ActivityPage from './features/activities/ActivityPage.jsx'
 import Anniversary from './features/home/Anniversary.jsx'
 import Home from './features/home/Home.jsx'
 import HomePreview from './features/home/HomePreview.jsx'
-import MeetingsPage from './features/home/MeetingsPage.jsx'
+import MeetingsPage from './features/meetings/MeetingsPage.jsx'
+import useMeetings from './features/meetings/useMeetings.js'
 import Icon from './components/Icon.jsx'
 
 export default function App({ onLoggedOut }) {
   const [config, setConfig] = useState(null)
   const [places, setPlaces] = useState(null)
-  const [meetings, setMeetings] = useState(null)
   const [error, setError] = useState('')
+  const { meetings, totalDays, addMeeting } = useMeetings(setError)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const clearError = useCallback(() => setError(''), [])
   const { route, focusId, replacePhoto } = useRoute(clearError)
@@ -27,14 +28,6 @@ export default function App({ onLoggedOut }) {
     api('places/')
       .then(list => { if (request.current === id) setPlaces(list) })
       .catch(err => { if (request.current === id) setError(err.message) })
-  }, [])
-
-  useEffect(() => {
-    let active = true
-    api('meetings/')
-      .then(list => { if (active) setMeetings(list) })
-      .catch(err => { if (active) setError(err.message) })
-    return () => { active = false }
   }, [])
 
   useEffect(() => {
@@ -59,13 +52,12 @@ export default function App({ onLoggedOut }) {
 
   const activity = ACTIVITIES.find((entry) => entry.id === route.activity)
   let page
-  const meetingDays = meetings?.reduce((sum, meeting) => sum + meeting.days, 0)
   if (route.meetings) {
-    page = <MeetingsPage meetings={meetings} onAdded={meeting => setMeetings(list => [...list, meeting])} />
+    page = <MeetingsPage meetings={meetings} onAdd={addMeeting} />
   } else if (route.activity) {
     page = activity ? <ActivityPage activity={activity} /> : <Missing text="找不到這一頁。" href="#/" label="回到首頁" />
   } else if (!route.slug) {
-    page = <HomePreview><Home onConfigSaved={setConfig} config={config} places={places} meetingDays={meetingDays} authed onOpenSettings={() => setSettingsOpen(true)} /></HomePreview>
+    page = <HomePreview><Home onConfigSaved={setConfig} config={config} places={places} meetingDays={totalDays} authed onOpenSettings={() => setSettingsOpen(true)} /></HomePreview>
   } else if (!places) {
     page = <p className="muted center pad">載入中…</p>
   } else if (!place) {
