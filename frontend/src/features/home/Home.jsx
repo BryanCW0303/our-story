@@ -104,7 +104,6 @@ export default function Home({ config, places, meetingDays, authed, onConfigSave
         )}
       </header>
 
-      {authed && <p className="center"><a className="btn ghost" href="#/storybook">翻開一週年立體書</a></p>}
       {places && config && <Reunion now={now} places={places} config={config} meetingDays={meetingDays} onSaved={onConfigSaved} />}
       {places && (
         <>

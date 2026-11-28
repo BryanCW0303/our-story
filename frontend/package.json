@@ -12,8 +12,7 @@
     "@fontsource/lxgw-wenkai-tc": "5.3.1",
     "@fontsource/noto-serif-tc": "5.3.1",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1",
-    "three": "^0.187.0"
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.3.0",

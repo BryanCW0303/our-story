@@ -9,7 +9,7 @@ export default defineConfig({
   build: {
     rolldownOptions: {
       output: {
-        chunkFileNames: (chunk) => ['App', 'Storybook'].includes(chunk.name) ? 'members/[name]-[hash].js' : 'assets/[name]-[hash].js',
+        chunkFileNames: (chunk) => chunk.name === 'App' ? 'members/[name]-[hash].js' : 'assets/[name]-[hash].js',
         assetFileNames: (asset) => asset.names.some((name) => name.endsWith('.jpg'))
           ? 'members/[name]-[hash][extname]' : 'assets/[name]-[hash][extname]',
       },
