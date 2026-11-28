@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import useRoute from './navigation/useRoute.js'
 import PlaceRoute from './features/places/PlaceRoute.jsx'
 import { PageFrame, Missing } from './components/PageFrame.jsx'
@@ -12,6 +12,8 @@ import HomePreview from './features/home/HomePreview.jsx'
 import MeetingsPage from './features/meetings/MeetingsPage.jsx'
 import useMeetings from './features/meetings/useMeetings.js'
 import Icon from './components/Icon.jsx'
+
+const Storybook = lazy(() => import('./features/storybook/Storybook.jsx'))
 
 export default function App({ onLoggedOut }) {
   const [config, setConfig] = useState(null)
@@ -49,6 +51,8 @@ export default function App({ onLoggedOut }) {
       setError(err.message)
     }
   }
+
+  if (route.storybook) return <Suspense fallback={<p role="status">正在展開書頁…</p>}><Storybook /></Suspense>
 
   const activity = ACTIVITIES.find((entry) => entry.id === route.activity)
   let page
